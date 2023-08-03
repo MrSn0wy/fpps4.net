@@ -1,0 +1,268 @@
+@media screen and (min-width: 3830px) {
+    .coming-soon {
+        font-size: 84px;
+    }
+
+    .main-text {
+        font-size: 94px;
+    }
+
+    .progress-text {
+        font-size: 50px;
+    }
+
+    .button {
+        padding: 27px 0;
+        width: 316px;
+        height: 122px;
+        font-size: 40px;
+        border-radius: 20px;
+        border: 6px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .bottom-top-text {
+        font-size: 94px;
+    }
+
+    .bottom-desc-text {
+        font-size: 48px;
+    }
+
+    .buttons-container {
+        gap: 126px;
+    }
+
+    .thank-user-container {
+        font-size: 40px;
+        gap: 54px;
+    }
+    .button:hover {border: 6px solid var(--txt-color);}
+
+}
+
+@media screen and (min-width: 2560px) {
+    .coming-soon {
+        font-size: 51px;
+    }
+
+    .main-text {
+        font-size: 65px;
+    }
+
+    .progress-text {
+        font-size: 27px;
+    }
+
+    .button {
+        padding: 16px 0;
+        width: 173px;
+        height: 66px;
+        font-size: 22px;
+        border-radius: 16px;
+        border: 3px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .bottom-top-text {
+        font-size: 52px;
+    }
+
+    .bottom-desc-text {
+        font-size: 30px;
+    }
+
+    .buttons-container {
+        gap: 80px;
+    }
+
+    .thank-user-container {
+        font-size: 24px;
+        gap: 32px;
+    }
+    .button:hover {border: 3px solid var(--txt-color);}
+
+}
+
+@media screen and (max-width: 1280px) {
+    .button {
+        padding: 9px 0;
+        width: 116px;
+        height: 42px;
+        font-size: 14px;
+    }
+
+    .bottom-top-text {
+        font-size: 28px;
+    }
+
+    .bottom-desc-text {
+        font-size:  18px;
+    }
+
+    .thank-user-container {
+        font-size: 16px;
+        left: 17%;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .top-text-container {
+        width: 65%;
+        height: 50%;
+    }
+
+    .coming-soon {
+        font-size: 30px;
+    }
+
+    .main-text {
+        font-size: 40px;
+    }
+
+
+    .bottom-top-text {
+        font-size: 25px;
+    }
+
+    .bottom-desc-text {
+        font-size:  17px;
+        margin: 0 15%;
+    }
+
+    .thank-user-container {
+        font-size: 15px;
+        left: 18%;
+        gap: 14px;
+        left: 9%;
+    }
+}
+
+@media screen and (max-width: 770px) {
+    .coming-soon {
+        font-size: 28px;
+    }
+
+    .main-text {
+        font-size: 38px;
+    }
+
+    .progress-text {
+        font-size: 17px;
+        margin: 0 10%;
+    }
+
+    .buttons-container {
+        gap: 40px;
+    }
+
+    .bottom-left {
+        left: 50%;
+        width: 80% !important;
+        height: 55%;
+        top: 16%;
+    }
+
+    .bottom-right {
+        top: 95%;
+        left: 50%;
+        width: 80% !important;
+        height: 55%;
+    }
+
+    .top-text-container {
+        width: 80% !important;
+    }
+
+    .bottom-container {
+        height: 60vh !important;
+    }
+
+    .thank-user-container{
+        left: 17%;
+    }
+    
+}
+
+@media screen and (max-width: 600px) {
+    .top-text-container {
+        height: 40%;
+    }
+
+    .coming-soon {
+        font-size: 22px;
+    }
+
+    .main-text {
+        font-size: 28px;
+    }
+
+    .progress-text {
+        font-size: 14px;
+    }
+
+    .bottom-top-text {
+        font-size: 26px;
+    }
+
+    .button {
+        padding: 7px 0;
+        width: 100px;
+        height: 34px;
+        font-size: 12px;
+    }
+
+    .bottom-desc-text {
+        font-size:  14px;
+    }
+
+    .thank-user-container {
+        font-size: 13px;
+        gap: 14px;
+    }
+
+    .buttons-container {
+        gap: 16px;
+    }
+}
+
+@media screen and (max-width: 460px) {
+    .top-text-container {
+        height: 35%;
+        width: 70%;
+    }
+
+    .main-text {
+        font-size: 26px;
+    }
+
+    .progress-text {
+        font-size: 13.5px;
+        margin: 0 1%;
+    }
+
+    .bottom-desc-text {
+        font-size:  13.5px;
+        margin: 0 4%;
+    }
+
+    .thank-user-container {
+        left: 8%;
+        font-size: 12px;
+        gap: 12px;
+    }
+}
+
+@media screen and (max-width: 360px) {
+    .progress-text {
+        font-size: 12.5px;
+    }
+
+    .bottom-desc-text {
+        font-size:  12.5px;
+    }
+
+    .thank-user-container {
+        left: 7%;
+        font-size: 12px;
+        gap: 12px;
+    }
+}

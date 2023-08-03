@@ -1,0 +1,72 @@
+<style>
+    header {
+        box-sizing: border-box;
+        display: flex;
+        position: fixed;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        height: 3rem;
+        /* margin-top: 1.5rem; */
+        background-color: var(--main1);
+        border: 0.05rem solid var(--border);
+        border-radius: 0 0 0.5rem 0.5rem;
+        box-shadow: 0 0.31rem 0.63rem 0 rgba(0, 0, 0, 0.5);
+        z-index: 6;
+        transition: all ease 0.2s;
+    }
+    header:hover {box-shadow: 0 0.31rem 0.94rem 0.31rem rgba(0, 0, 0, 0.5);}
+
+    .logo {
+        margin: 0 3.5vw;
+        padding: 1.25rem 0.94rem !important;
+        text-decoration: none;
+        font-size: 1.5rem;
+        color: var(--text);
+        line-height: 0%;
+        filter: invert(1);
+    }
+    .logo span {filter: invert(1);} /* fix text color */
+
+    .navbar-right {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        line-height: 0%;
+        margin: 0 3.5vw;
+        gap: 0.5vw;
+        filter: invert(1);
+    }
+
+    .gh-logo, .dc-logo, .menu-icon, .lightModeButton, .logo {
+        cursor: pointer;
+        border-radius: 0.5rem;
+    }
+    .smolImage {height: 1.5rem; width: 1.5rem;}
+    .bigImage {height: 2.5rem; width: 2.5rem;}
+    .gh-logo, .dc-logo {padding: 0.38rem;} /* fix icon hover */
+    .dc-logo {margin-right: 1.2vw;}
+
+    .lightMode .navbar-right, .lightMode .logo {filter: invert(0);} /* light mode */
+    .lightMode .logo span {filter: invert(0);} /* light mode */
+    .menu-icon:hover, .gh-logo:hover, .dc-logo:hover, .lightModeButton:hover, .logo:hover {background-color: #00000014;}/* hover effect */
+</style>
+<a href="https://fpps4.net" class="logo">
+    <span style="color: #fff53c; font-weight: 500;">fp</span><span style="font-weight: 500;">PS4</span>
+</a>
+<div class="navbar-right">
+    <a href="https://github.com/red-prig/fpPS4" class="gh-logo">
+        <img src="https://fpps4.net/parts/images/github.svg" class="smolImage" alt="Github logo">
+    </a>
+    <a href="https://discord.com/invite/up9qatpX7M" target="_blank" class="dc-logo">
+        <img src="https://fpps4.net/parts/images/discord.svg" class="smolImage" alt="Discord logo">
+    </a>
+    <div onclick="toggleMenu()" class="menu-icon">
+        <img src="https://fpps4.net/parts/images/menu.svg" id="menu-icon" class="bigImage" alt="Menu button">
+        <img src="https://fpps4.net/parts/images/close.svg" id="close-icon" style="display: none;" class="bigImage" alt="Close Menu button">
+    </div>
+    <div onclick="toggleLightMode()" class="lightModeButton">
+        <img src="https://fpps4.net/parts/images/dark_mode.svg" id="darkModeIcon" style="opacity: 0;" class="bigImage" alt="Dark mode toggle">
+        <img src="https://fpps4.net/parts/images/light_mode.svg" id="lightModeIcon" style="display: none;" class="bigImage" alt="Light mode toggle">
+    </div>
+</div>

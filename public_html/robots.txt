@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://fpps4.net/sitemap.xml

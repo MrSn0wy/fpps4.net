@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500&display=swap');
+
+/*+ scrollbar */
+::-webkit-scrollbar {
+  width: 9px;}
+
+::-webkit-scrollbar-thumb {
+  background: var(--main0); 
+  border-radius: 2px;}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--main1); }
+/*- scrollbar */
+.skeletonAnimation {
+  background-image: linear-gradient(90deg, var(--border), var(--main1), var(--border)) !important;
+  background-size: 200% 100% !important;
+  animation: skeletonLoading 2s ease-in-out infinite;
+}
+@keyframes skeletonLoading {
+  0% {background-position: -100% 0;}
+  100% {background-position: 100% 0;}
+}
+
+:root {
+  --text: #eceff4;
+  --border: #e1e1e10d;
+  --solidBorder: #393b3e;
+  --background: #101112;
+  --main0: #26272a;
+  --main1: #2f3134;
+  --hover: #393b3e;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Rubik', sans-serif;
+  scrollbar-color: var(--main1) #ffffff00; /* - FF scrollbar */
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 400;
+}
+
+html {
+  font-size: 16px;
+}
+
+body{
+  background: var(--background);
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: scroll;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  align-items: center;
+  box-shadow: 0 0.3rem 0.7rem 0 rgba(0, 0, 0, 0.5);
+  background: var(--main0);
+  border-radius: 6px;
+  margin-top: 90px;
+  padding: 2rem 0 0;
+  width: 40rem;
+  border: 0.2rem solid var(--main0);
+}
+
+.mainText {font-weight: 500;}
+
+.smolMainText {
+  width: 600px;
+  padding: 4% 2% 3%;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+/*+ PROGRESS BAR*/
+.progressContainer {width: 28rem;}
+
+.progressRow {
+  display: flex;
+  gap: 1rem;
+}
+
+.progressWrap {
+  border: 0.05rem solid var(--border);
+  background: var(--main1);
+  position: relative;
+  overflow: hidden;
+  margin: 1.1% 0;
+  border-radius: 0.5rem;  
+  box-sizing: border-box;
+  height: 2rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  transition: background 0.1s ease-in-out;
+  cursor: pointer;
+  user-select: none;
+}
+.progressWrap:hover {background: var(--hover);}
+/*- PROGRESS BAR*/
+
+.searchBar {
+  padding-left: 1rem;
+  width: 19.4rem;
+  height: 2.15rem;
+  margin: 1.9rem 0 0.3rem;
+  background: var(--main1);
+  border: 0.05rem solid var(--border);
+  border-radius: 0.6rem;
+}
+.searchBar:focus {outline: none; background: var(--hover); transition: background 0.1s ease-in-out;}
+.searchBar::placeholder {color: #8C8C8C; font-weight: 500; font-size: 0.8rem;}
+.searchBar:hover {background-color: var(--hover);}
+
+.optionButtons {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.25rem 0;
+  width: 100%;
+}
+
+.optionButton {
+  cursor: pointer;
+  width: 6rem;
+  user-select: none;
+  height: 1.3rem;
+  background: var(--main1);
+  padding: 0.3rem 0;
+  text-align: center;
+  border-radius: 0.4rem;
+  border: 0.05rem solid var(--border);
+  font-weight: 500;
+}
+.optionButton:hover {background: var(--hover);}
+
+/*+ GAME CARDS*/
+.gameWrapper {width: 95%;}
+
+.gameContainer {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 5.3rem;
+  margin: 1rem 0;
+  text-decoration: none;
+  background: var(--main1);
+  border-radius: 0.5rem;
+  transition: background-color 0.1s ease-in-out;
+  cursor: default;
+}
+
+.gameContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border: 0.05rem solid var(--solidBorder);
+  border-radius: 0.5rem;
+  pointer-events: none;
+  z-index: 2;
+}
+.gameContainer:hover {background: var(--hover);}
+/*- GAME CARDS*/
+
+@media screen and (max-width: 750px) {
+  .main {
+    width: 35rem;
+    border-radius: 1rem;
+  }
+  .gameName {
+    width: 18.5rem;
+  }
+  .gameName:hover {
+    width: 24rem;
+  }
+}
