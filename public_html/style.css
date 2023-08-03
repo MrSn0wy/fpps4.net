@@ -1,32 +1,42 @@
-
-
-/* + scrollbar */
+/*+ scrollbar */
 ::-webkit-scrollbar {
-    width: 9px;}
+  width: 0.57rem;}
 
-  ::-webkit-scrollbar-thumb {
-    background: #2a3136; 
-    border-radius: 2px;}
+::-webkit-scrollbar-thumb {
+  background: var(--hover); 
+  border-radius: 0.13rem;}
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: #383e45; }
-/* - scrollbar */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--selected); }
+/*- scrollbar */
+
+:root {
+  --text: #eceff4;
+  --border: #e1e1e10d;
+  --solidBorder: #393b3e;
+  --background: #101112;
+  --main0: #26272a;
+  --main1: #2f3134;
+  --hover: #393b3e;
+  --selected: #424448;
+}
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Montserrat', sans-serif;
-    color: white;
+    color: var(--text);
     text-decoration: none;
-    scrollbar-color: #2a3136 #ffffff00; /* - FF scrollbar */
+    scrollbar-color: var(--main1) #ffffff00; /* - FF scrollbar */
     text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html {scroll-behavior: smooth; transition: all ease 0.4s;}
 
 body{
-    background-color: #0e141b;
+    background-color: var(--background);
     overflow-x: hidden;
     height: 180vh !important;
 }
@@ -48,8 +58,8 @@ body{
     left: 50%;
     width: 50%;
     height: 50%;
-    background-color: #242830;
-    border: 1px solid rgba(225, 225, 225, 0.05);
+    background-color: var(--main0);
+    border: 1px solid var(--border);
     border-radius: 8px;
     box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5);
 }
@@ -85,7 +95,7 @@ body{
     text-align: center;
     border-radius: 8px;
     font-size: 16px;
-    border: 2px solid rgba(255, 255, 255, 0.4);
+    border: 2px solid var(--solidBorder);
 }
 
 .topButtonContainer {
@@ -113,8 +123,8 @@ body{
     flex-direction: column;
     align-items: center;
     text-align: center;
-    background-color: #252a33;
-    border: 1px solid rgba(225, 225, 225, 0.05);
+    background-color: var(--main0);
+    border: 1px solid var(--border);
     border-radius: 8px;
     box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5);
 }
@@ -129,7 +139,7 @@ body{
     height: 62%;
     flex-direction: column;
     align-items: center;
-    background-color: #252a33;
+    background-color: var(--main0);
     border: 1px solid rgba(225, 225, 225, 0.05);
     border-radius: 8px;
     box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5);
@@ -171,7 +181,7 @@ body{
 
 .top-text-container:hover {box-shadow: 0px 6px 15px 2px rgba(0, 0, 0, 0.5);}
 
-.button:hover {border: 2px solid white;}
+.button:hover {border: 2px solid var(--text);}
 
 .bottom-right:hover {box-shadow: 0px 6px 15px 2px rgba(0, 0, 0, 0.5);}
 
