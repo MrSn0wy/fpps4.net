@@ -173,7 +173,7 @@ function get_image($cusaCode, $conn, $serverUsername) {
                 $httpsIconUrl = str_replace('http://', 'https://', $iconUrl);
                 $imagick = new Imagick();
 
-                $avifIconURL = "/home/{$serverUsername}/domains/fpps4.net/public_html/beta/images/CUSA/{$cusaCode}.avif";
+                $avifIconURL = "/home/{$serverUsername}/domains/fpps4.net/public_html/images/CUSA/{$cusaCode}.avif";
                 $result = null;
                 if ($imagick->readImage($httpsIconUrl)) {
                     $imageFormat = $imagick->getImageFormat();
@@ -226,7 +226,7 @@ for ($page = 1; $page <= $total_pages; $page++) {
     foreach ($issues_array as $issue) {
         $title = $issue['title'];
         $cusaCode = extract_cusaCode($title);
-        $avifIconURL = "/home/{$serverUsername}/domains/fpps4.net/public_html/beta/images/CUSA/{$cusaCode}.avif";
+        $avifIconURL = "/home/{$serverUsername}/domains/fpps4.net/public_html/images/CUSA/{$cusaCode}.avif";
 
         // Check if cusa code is empty
         if ($cusaCode) {

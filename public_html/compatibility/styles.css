@@ -2,33 +2,59 @@
 
 /*+ scrollbar */
 ::-webkit-scrollbar {
-  width: 9px;}
+  width: 0.57rem;}
 
 ::-webkit-scrollbar-thumb {
-  background: var(--main0); 
-  border-radius: 2px;}
+  background: var(--hover); 
+  border-radius: 0.13rem;}
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--main1); }
+  background: var(--selected); }
 /*- scrollbar */
-.skeletonAnimation {
-  background-image: linear-gradient(90deg, var(--border), var(--main1), var(--border)) !important;
-  background-size: 200% 100% !important;
-  animation: skeletonLoading 2s ease-in-out infinite;
-}
-@keyframes skeletonLoading {
-  0% {background-position: -100% 0;}
-  100% {background-position: 100% 0;}
-}
 
 :root {
   --text: #eceff4;
+  --whiteText: #eceff4;
   --border: #e1e1e10d;
   --solidBorder: #393b3e;
   --background: #101112;
   --main0: #26272a;
   --main1: #2f3134;
   --hover: #393b3e;
+  --selected: #424448;
+}
+
+.lightMode {
+  --text: #2E3440;
+  --border: #b2b8c770;
+  --solidBorder: #b2b8c7;
+  --background: #ECEFF4;
+  --main0: #E5E9F0;
+  --main1: #D8DEE9;
+  --hover: #c6ccd9;
+  --selected: #b0b7c7;
+}
+.lightMode .lightmodeText{color: #eceff4}
+
+/* .lightmode ::selection{background-color: #3864d4}
+::selection {
+  background-color: yellow;
+} */
+
+.Nothing {--status-color: #1F2325;}
+.Boots {--status-color: #F2766E;}
+.Menus {--status-color:  #4288B7;}
+.Ingame {--status-color: #fabb44;}
+.Playable {--status-color: #54A396;}
+
+.skeletonAnimation {
+  background-image: linear-gradient(90deg, var(--solidBorder), var(--main1), var(--solidBorder)) !important;
+  background-size: 200% 100% !important;
+  animation: skeletonLoading 2s ease-in-out infinite;
+}
+@keyframes skeletonLoading {
+  0% {background-position: -100% 0;}
+  100% {background-position: 100% 0;}
 }
 
 * {
@@ -39,6 +65,7 @@
   color: var(--text);
   text-decoration: none;
   font-weight: 400;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
@@ -47,22 +74,22 @@ html {
 
 body{
   background: var(--background);
-  overflow-x: hidden;
-  display: flex;
   flex-direction: column;
   align-items: center;
   overflow-y: scroll;
+  overflow-x: hidden;
+  display: flex;
 }
 
 .main {
   display: flex;
   flex-direction: column;
-  position: absolute;
+  position: relative;
   align-items: center;
   box-shadow: 0 0.3rem 0.7rem 0 rgba(0, 0, 0, 0.5);
   background: var(--main0);
   border-radius: 6px;
-  margin-top: 90px;
+  margin-top: 6rem;
   padding: 2rem 0 0;
   width: 40rem;
   border: 0.2rem solid var(--main0);
@@ -71,7 +98,7 @@ body{
 .mainText {font-weight: 500;}
 
 .smolMainText {
-  width: 600px;
+  width: 37.5rem;
   padding: 4% 2% 3%;
   text-align: center;
   font-size: 1.1rem;
@@ -85,8 +112,8 @@ body{
   gap: 1rem;
 }
 
-.progressWrap {
-  border: 0.05rem solid var(--border);
+.progressWrap {border: 0.05rem solid var(--border);}
+.progressWrap, .progressWrapb {
   background: var(--main1);
   position: relative;
   overflow: hidden;
@@ -101,21 +128,82 @@ body{
   cursor: pointer;
   user-select: none;
 }
-.progressWrap:hover {background: var(--hover);}
+.progressWrap:hover, .progressWrapb:hover {background: var(--hover);}
+
+.progressWrapb::after { /*fix black progressbar*/
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border: 0.05rem solid var(--border);
+  border-radius: 0.5rem;
+  z-index: 4;
+}
+
+.progressBar {
+  position: absolute;
+  height: 100%;
+  width: 0%;
+  border-radius: 0.3rem;
+  transition: width 0.5s ease-in-out;
+}
+
+.progressBarText {
+  position: absolute;
+  font-weight: 500;
+  left: 1rem;
+  z-index: 3;
+}
+
+.progressBarInfo {
+  position: absolute;
+  z-index: 4;
+  right: 0.5rem;
+  font-size: 0.9rem;
+  transition: opacity 0.15s ease-in-out;
+}
+.selected, .selected:hover {background: var(--selected) !important;}
 /*- PROGRESS BAR*/
 
-.searchBar {
+
+.searchBarContainer {display: flex;}
+.searchBar,
+.pageSelector {
   padding-left: 1rem;
-  width: 19.4rem;
+  /* width: 19.4rem; */
   height: 2.15rem;
   margin: 1.9rem 0 0.3rem;
   background: var(--main1);
   border: 0.05rem solid var(--border);
-  border-radius: 0.6rem;
+  /* border-radius: 0.6rem; */
+  line-height: 0;
+  font-size: 0.9rem;
 }
-.searchBar:focus {outline: none; background: var(--hover); transition: background 0.1s ease-in-out;}
-.searchBar::placeholder {color: #8C8C8C; font-weight: 500; font-size: 0.8rem;}
-.searchBar:hover {background-color: var(--hover);}
+
+.searchBar {
+  width: 14.3rem;
+  border-radius: 0.6rem 0rem 0rem 0.6rem;
+}
+
+.pageSelector {
+  width: 3rem;
+  border-radius: 0rem 0.6rem 0.6rem 0rem;
+  font-weight: 500;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.pageSelector::-webkit-inner-spin-button,
+.pageSelector::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+.searchBar:focus,
+.pageSelector:focus {outline: none; background: var(--hover); transition: background 0.1s ease-in-out;}
+.searchBar::placeholder {color: #8C8C8C; font-weight: 500;}
+.pageSelector::placeholder {color: var(--text);}
+.searchBar:hover, .pageSelector:hover {background-color: var(--hover);}
 
 .optionButtons {
   display: flex;
@@ -138,7 +226,20 @@ body{
 }
 .optionButton:hover {background: var(--hover);}
 
+.noResultsText {
+  text-align: center;
+  padding: 2rem 0 0rem;
+  font-weight: 500;
+}
+
+.noResultsEmoji {
+  text-align: center;
+  font-size: 2.5rem;
+  padding: 2rem 0 3rem;
+}
+
 /*+ GAME CARDS*/
+
 .gameWrapper {width: 95%;}
 
 .gameContainer {
@@ -168,17 +269,101 @@ body{
   z-index: 2;
 }
 .gameContainer:hover {background: var(--hover);}
+
+.gameImageLink {
+  border-radius: 0.6rem 0.4rem 0.4rem 0.6rem;
+  overflow: hidden;
+}
+
+.gameImage {
+  width: 5.3rem;
+  height: 5.3rem;
+  max-width: 5.3rem;
+  border-radius: 0.5rem 0.4rem 0.4rem 0.5rem;
+  transition: transform 0.2s ease-in-out;
+}
+
+.gameSeparator {
+  height: 3.9rem;
+  margin: 0.7rem 1.25rem;
+  border-right: 0.375rem solid var(--status-color);
+  border-radius: 0.25rem;
+}
+
+.gameDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.gameName {
+  font-weight: 500;
+  font-size: 1.125rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: width 0.4s ease-out;
+  width: 22rem;
+}
+.gameName:hover {width: 29.3rem;}
+
+.gameCusa {
+  position: absolute;
+  right: 0.94rem;
+  padding: 0.25rem 0.38rem;
+  font-weight: 500;
+  font-size: 0.87rem;
+}
+
+.gameStatus {
+  width: 5.7rem;
+  height: 1.5rem;
+  margin-top: 0.94rem;
+  background-color: var(--status-color);
+  border-radius: 0.25rem;
+  text-align: center;
+  line-height: 1.5rem;
+  user-select: none;
+  color: var(--whiteText);
+}
 /*- GAME CARDS*/
 
-@media screen and (max-width: 750px) {
+.totalTimeText {
+  text-align: center;
+  font-size: 1rem;
+  padding: 0 0 0.7rem;
+}
+
+@media screen and (max-width: 700px) {
   .main {
-    width: 35rem;
-    border-radius: 1rem;
+    width: 34rem;
+    border-radius: 0.8rem;
   }
   .gameName {
-    width: 18.5rem;
+    width: 17.5rem;
   }
   .gameName:hover {
-    width: 24rem;
+    width: 23rem;
   }
+
+  .smolMainText {
+    width: 30rem;
+  }
+  .footerText {
+    font-size: 0.89rem !important;
+  }
+}
+@media screen and (max-width: 550px) {
+  .optionButton:hover {background: var(--main1);}
+  .progressWrap:hover, .progressWrapb:hover {background: var(--main1);}
+  .selected .progressBarInfo{opacity: 1;}
+  .menu-icon:hover, .gh-logo:hover, .dc-logo:hover, .lightModeButton:hover, .logo:hover {background-color: #00000000 !important};
+  .gameDetails:hover .gameName {width: 23rem !important;}
+  .footerSeparator {display: flex !important;}
+  .footerContent:hover {background-color: #00000000 !important;}
+}
+
+@media screen and (min-width: 550px) {
+  .progressWrap:hover .progressBarInfo, .progressWrapb:hover .progressBarInfo{opacity: 1;}
 }
