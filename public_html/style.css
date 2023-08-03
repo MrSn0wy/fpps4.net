@@ -88,8 +88,12 @@ body{
     border: 2px solid rgba(255, 255, 255, 0.4);
 }
 
-.learnmore-button {
+.topButtonContainer {
+    display: flex;
     top: 72%;
+    flex-direction: row;
+    position: relative;
+    gap: 20px;
 }
 
 .bottom-container {
