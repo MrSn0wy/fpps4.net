@@ -5,4 +5,5 @@
 ## The offical repositoy for [fpps4.net](https://fpps4.net)
 This is the offcial source code for [fpps4.net](https://fpps4.net).
 <br>
-Any changes will be published to this repository to keep it to date with the website.
+Any changes will be published to this repository to keep it up to date with the website.
+<br>
