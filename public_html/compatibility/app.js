@@ -144,7 +144,7 @@ function gameStats() {
 };
 
 // Header Load
-fetch('https://fpps4.net/parts/navbar.html')
+fetch('https://fpps4.net/parts/navbar.html?v=1')
 .then(response => response.text())
 .then(data => {
   document.querySelector('#header').innerHTML = data;
