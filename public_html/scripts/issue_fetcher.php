@@ -93,6 +93,12 @@ function insert_issue($issue, $conn) {
     $tags = implode(', ', array_column($issue['labels'], 'name'));
     $updatedDate = date('d/m/Y', strtotime($issue['updated_at']));
 
+    $id = filter_var($id, FILTER_VALIDATE_INT);
+    $title = filter_var($title,  FILTER_SANITIZE_STRING);
+    $cusaCode = filter_var($cusaCode,  FILTER_SANITIZE_STRING);
+    $tags = filter_var($tags,  FILTER_SANITIZE_STRING);
+    $updatedDate = filter_var($updatedDate,  FILTER_SANITIZE_STRING);
+
     // Remove CUSA code from the title
     $clean_title = preg_replace('/\b' . preg_quote($cusaCode, '/') . '\b/', '', $title);
     $clean_title = preg_replace('/\s+-\s+/', ' - ', $clean_title);
