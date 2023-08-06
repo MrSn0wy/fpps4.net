@@ -59,10 +59,17 @@
     <div class="gameContainer skeletonAnimation"></div>
     <div class="gameContainer skeletonAnimation"></div>
   </div>
+  <div class="pageBarContainer">
+    <img class="pageBarImage" id="pageBarBack" onclick="pageBarBack()" src="../images/arrow_back.svg" alt="">
+    <p class="pageBarButton" id="pageBarMin" onclick="pageBarMin()">1</p>
+    <input class="pageBarSearch" id="search3" autocomplete="off" type="number" min="1" placeholder="..." name="fpps4">
+    <p class="pageBarButton" id="pageBarMax" onclick="pageBarMax()">1</p>
+    <img class="pageBarImage" id="pageBarForward" onclick="pageBarForward()" src="../images/arrow_forward.svg" alt="">
+  </div>
   <h5 style="text-align: center; font-size: 0.8rem;">Trademarks and logos displayed on this website are the property of their respective owners.<br> The use of any third-party trademarks, brand names, product names, and logos is for<br> informational purposes only and does not imply endorsement or sponsorship.</h5>
   <br>
 </main>
 <footer id="footer"></footer>
-<script defer src="app.js?v=1"></script>
+<script defer src="app.js"></script>
 </body>
 </html>

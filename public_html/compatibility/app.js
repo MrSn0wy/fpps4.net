@@ -3,6 +3,10 @@ let avifSupport = false;
 let sTimer;
 let iTimer;
 let pTimer;
+let pbTimer;
+let pfTimer;
+let pmaxTimer;
+let pminTimer;
 let skeletonTimeout;
 let tagFilter = [];
 let oldestFilter = false;
@@ -12,6 +16,7 @@ let pageNumber = 1;
 let inputValue = 1;
 let updatePageValue = false;
 let noImagesLocked = false;
+let maxValue;
 
 function setCookie(name, value) {
   var date = new Date();
@@ -90,6 +95,7 @@ avif.onerror = function() {
   console.log('AVIF IS NOT SUPPORTED D:');
   avifSupport = false;
   noImagesLocked = true;
+  window.alert("Hey! Your browser doesnt support avif, avif is an image format that has low file sizes while having high quality images. I will give you an N/A jpeg instead.");
   imageButton();
 };
 
@@ -144,7 +150,7 @@ function gameStats() {
 };
 
 // Header Load
-fetch('https://fpps4.net/parts/navbar.html?v=1')
+fetch('https://fpps4.net/parts/navbar.html')
 .then(response => response.text())
 .then(data => {
   document.querySelector('#header').innerHTML = data;
@@ -205,7 +211,7 @@ function imageHandler() {
   document.querySelectorAll('.gameImage').forEach(gameImage => {
     gameImage.setAttribute("loading", "lazy");
     const data = gameImage.dataset.cusa;
-    gameImage.src = data.includes('CUSA') && imageLoading ? (avifSupport ? "../images/CUSA/" + data + ".avif" : "../images/NA.jpg") : (avifSupport ? "../images/NA.avif" : "../images/NA.jpg");
+    gameImage.src = data.includes('CUSA') && imageLoading ? (avifSupport ? "https://fpps4.net/images/CUSA/" + data + ".avif" : "https://fpps4.net/images/NA.jpg") : (avifSupport ? "https://fpps4.net/images/NA.avif" : "https://fpps4.net/images/NA.jpg");
   });
 }
 
@@ -352,14 +358,33 @@ function toggleMenu() {
   };
 };
 
+const inputElement = document.getElementById('search2');
 function updatePageSelector() {
-  const inputElement = document.getElementById('search2');
-  let maxValue = document.getElementById("totalPages").getAttribute('data');
+  search3.classList.add('selected');
+  maxValue = document.getElementById("totalPages").getAttribute('data');
   if (updatePageValue === true) {
     inputValue = 1;
     updatePageValue = false;
+    document.getElementById('pageBarMin').classList.add('selected');
   }
 
+  if (inputValue == 1) {
+    document.getElementById('pageBarMin').classList.add('selected');
+    search3.placeholder = '...';
+    search3.classList.remove('selected');
+  } else {
+    document.getElementById('pageBarMin').classList.remove('selected');
+  }
+
+  if (inputValue == maxValue) {
+    document.getElementById('pageBarMax').classList.add('selected');
+    search3.placeholder = '...';
+    search3.classList.remove('selected');
+  } else {
+    document.getElementById('pageBarMax').classList.remove('selected');
+  }
+
+  document.getElementById('pageBarMax').textContent = maxValue;
   inputElement.placeholder = inputValue + "/" + maxValue;
 
   inputElement.addEventListener('input', function(event) {
@@ -376,6 +401,7 @@ function updatePageSelector() {
     }
 
     inputElement.placeholder = inputValue + "/" + maxValue;
+    search3.placeholder = inputValue;
     pTimer = setTimeout(() => {
       if (inputValue > 9) {
         inputElement.style.padding = "0 0.3rem 0 0.7rem";
@@ -383,11 +409,125 @@ function updatePageSelector() {
         inputElement.style.padding = "";
       }
       inputElement.value = "";
+      search3.value = "";
       pageNumber = inputValue;
       UpdateSearchResults();
     }, 500);
   });
 }
+
+function pageBarBack() {
+  if (pageNumber > 1) {
+    clearTimeout(pbTimer);
+    inputValue--;
+    pageNumber--;
+    document.getElementById('pageBarMax').classList.remove('selected');
+    if (pageNumber == 1) {
+      search3.placeholder = '...';
+      search3.classList.remove('selected');
+      document.getElementById('pageBarMin').classList.add('selected');
+    } else {
+    search3.placeholder = pageNumber;
+    search3.classList.add('selected');
+    }
+    pbTimer = setTimeout(() => {
+      UpdateSearchResults();
+    }, 500);
+  }
+}
+
+function pageBarForward() {
+  maxValue = document.getElementById("totalPages").getAttribute('data');
+  if (inputValue < maxValue) {
+    clearTimeout(pfTimer);
+    inputValue++;
+    pageNumber++;
+    document.getElementById('pageBarMin').classList.remove('selected');
+    if (pageNumber == maxValue) {
+      search3.placeholder = '...';
+      search3.classList.remove('selected');
+      document.getElementById('pageBarMax').classList.add('selected');
+    } else {
+      search3.placeholder = inputValue;
+      search3.classList.add('selected');
+    }
+    pfTimer = setTimeout(() => {
+      UpdateSearchResults();
+    }, 500);
+  }
+}
+
+function pageBarMax() {
+  clearTimeout(pmaxTimer);
+  document.getElementById('pageBarMax').classList.add('selected');
+  document.getElementById('pageBarMin').classList.remove('selected');
+  inputValue = maxValue;
+  search3.placeholder = '...';
+  search3.classList.remove('selected');
+  pageNumber = maxValue;
+  pmaxTimer = setTimeout(() => {
+    UpdateSearchResults();
+  }, 400);
+}
+
+function pageBarMin() {
+  clearTimeout(pminTimer);
+  document.getElementById('pageBarMin').classList.add('selected');
+  document.getElementById('pageBarMax').classList.remove('selected');
+  search3.placeholder = '...';
+  search3.classList.remove('selected');
+  inputValue = 1;
+  pageNumber = 1;
+  pminTimer = setTimeout(() => {
+    UpdateSearchResults();
+    search3.placeholder = '...';
+  }, 400);
+}
+
+const search3 = document.getElementById("search3");
+
+search3.addEventListener("click", function() {
+  if (search3.placeholder == '...') {
+    search3.placeholder = ''; 
+  }
+});
+
+search3.addEventListener("blur", function() {
+  if (search3.placeholder == '') {
+    search3.placeholder = '...'; 
+  }
+});
+
+search3.addEventListener('input', function(event) {
+  clearTimeout(pTimer);
+  inputValue = parseInt(search3.value, 10);
+  document.getElementById('pageBarMax').classList.remove('selected');
+  document.getElementById('pageBarMin').classList.remove('selected');
+
+  if (isNaN(parseFloat(inputValue))) {
+    inputValue = 1;
+  }
+  if (inputValue > maxValue) {
+    inputValue = maxValue;
+  } else if (inputValue < 1) {
+    inputValue = 1;
+  }
+
+  inputElement.placeholder = inputValue + "/" + maxValue;
+  search3.placeholder = inputValue;
+  pTimer = setTimeout(() => {
+    if (inputValue > 9) {
+      inputElement.style.padding = "0 0.3rem 0 0.7rem";
+    } else if (inputValue < 10) {
+      inputElement.style.padding = "";
+    }
+    inputElement.value = "";
+    search3.value = "";
+    search3.classList.add('selected');
+    pageNumber = inputValue;
+    UpdateSearchResults();
+  }, 500);
+});
 
 // Footer Load
 fetch('https://fpps4.net/parts/footer.html')
