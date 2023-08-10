@@ -24,7 +24,14 @@
   .progressBarInfo {opacity: 0;}
 </style>
 <body>
-<header id="header"></header>
+<header id="header">
+  <style>
+    header {
+      position: fixed;
+      height: 3rem;
+    }
+  </style>
+</header>
 <main class="main">
   <h1 class="mainText">Game Compatibility List</h1>
   <h3 class="smolMainText">These are the games that have been tested with <span style="color: #f0e74a;">fp</span>PS4.<br>Click on an image to view the game's GitHub issue.<br>The database is updated every 20 minutes.</h3>
@@ -42,7 +49,6 @@
     <div class="searchBarContainer">
       <input autocomplete="off" type="text" name="fpps4" class="searchBar" id="search" placeholder="Search TITLE / CUSA">
       <input autocomplete="off" type="number" min="1" placeholder="1/1" name="fpps4" class="pageSelector" id="search2">
-      <!-- chrome, stop thinking that an text and number field is used to input passwords... please-->
     </div>
     
     <div class="optionButtons">
@@ -58,6 +64,21 @@
     <div class="gameContainer skeletonAnimation"></div>
     <div class="gameContainer skeletonAnimation"></div>
     <div class="gameContainer skeletonAnimation"></div>
+    <div class="gameContainer skeletonAnimation"></div>
+    <div class="gameContainer skeletonAnimation"></div>
+    <div class="gameContainer skeletonAnimation"></div>
+    <div class="gameContainer skeletonAnimation"></div>
+    <div class="gameContainer skeletonAnimation"></div>
+    <div class="gameContainer skeletonAnimation"></div>
+    <div class="gameContainer skeletonAnimation"></div>
+    <div class="gameContainer skeletonAnimation"></div>
+    <div class="gameContainer skeletonAnimation"></div>
+    <div class="gameContainer skeletonAnimation"></div>
+    <div class="gameContainer skeletonAnimation"></div>
+    <div class="gameContainer skeletonAnimation"></div>
+    <div class="gameContainer skeletonAnimation"></div>
+    <div class="gameContainer skeletonAnimation"></div>
+    <h4 class="totalTimeText">0 results in 0ms </h4>
   </div>
   <div class="pageBarContainer">
     <img class="pageBarImage" id="pageBarBack" onclick="pageBarBack()" src="../images/arrow_back.svg" alt="">
@@ -69,7 +90,14 @@
   <h5 style="text-align: center; font-size: 0.8rem;">Trademarks and logos displayed on this website are the property of their respective owners.<br> The use of any third-party trademarks, brand names, product names, and logos is for<br> informational purposes only and does not imply endorsement or sponsorship.</h5>
   <br>
 </main>
-<footer id="footer"></footer>
+<footer id="footer">
+  <style>
+    footer {
+      height: 3.65rem;
+      margin-top: 3rem;
+    }
+  </style>
+</footer>
 <script defer src="app.js"></script>
 </body>
 </html>
