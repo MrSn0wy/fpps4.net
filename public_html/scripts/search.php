@@ -47,7 +47,11 @@
 /// if there is an search query in the request
   if (!empty($searchQuery)) {
     $searchQuery = strtolower($searchQuery);
-    $conditions[] = strpos($searchQuery, 'cusa') ? "cusaCode LIKE :searchQuery" : "title LIKE :searchQuery";
+    if (strpos($searchQuery, 'cusa') !== false) {
+      $conditions[] = "cusaCode LIKE :searchQuery";
+  } else {
+      $conditions[] = "title LIKE :searchQuery";
+  }
     $params[':searchQuery'] = $searchQuery . '%';
   }
   
