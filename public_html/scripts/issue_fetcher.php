@@ -99,12 +99,18 @@ function insert_issue($issue, $conn) {
     $tags = filter_var($tags,  FILTER_SANITIZE_STRING);
     $updatedDate = filter_var($updatedDate,  FILTER_SANITIZE_STRING);
 
-    // Remove CUSA code from the title
-    $clean_title = preg_replace('/\b' . preg_quote($cusaCode, '/') . '\b/', '', $title);
-    $clean_title = preg_replace('/\s+-\s+/', ' - ', $clean_title);
-    $clean_title = rtrim($clean_title, '- ');
-    $clean_title = rtrim($clean_title, ' ');
-    $clean_title = rtrim($clean_title, '[]');
+    // Handle homebrews and remove CUSA code from the title
+    if (in_array("app-homebrew", array_column($issue['labels'], 'name'))) {
+        $cusaCode = "HOMEBREW";
+        $clean_title = preg_replace('/\s-\s.*$/', '', $title);
+        $clean_title = trim(explode('(Homebrew)', $clean_title)[0]);
+    } else {
+        $clean_title = preg_replace('/\b' . preg_quote($cusaCode, '/') . '\b/', '', $title);
+        $clean_title = preg_replace('/\s+-\s+/', ' - ', $clean_title);
+        $clean_title = rtrim($clean_title, '- ');
+        $clean_title = rtrim($clean_title, ' ');
+        $clean_title = rtrim($clean_title, '[]');
+    }
 
     // Filter labels and give them the correct names
     $filteredTags = array_filter($issue['labels'], function ($label) {
@@ -118,7 +124,7 @@ function insert_issue($issue, $conn) {
     if (empty($tagNames)) {
         $tagNames = ['N/A'];
     } else {
-        // Define the order of preference for tags
+        // Define the order of the tags
         $tagOrder = [
             'status-playable',
             'status-ingame',
@@ -127,12 +133,12 @@ function insert_issue($issue, $conn) {
             'status-nothing'
         ];
 
-        // Sort the tags based on their preference
+        // Sort the tags
         usort($tagNames, function ($a, $b) use ($tagOrder) {
             return array_search($a, $tagOrder) <=> array_search($b, $tagOrder);
         });
 
-        // Take the first (best) tag
+        // Take the best tag
         $tagNames = array_slice($tagNames, 0, 1);
     }
 
@@ -224,6 +230,7 @@ $total_skipped = 0;
 $CUSA_total_skipped = 0;
 $images_downloaded = 0;
 $images_skiped = 0;
+$homebrewProcessed = 0;
 
 for ($page = 1; $page <= $total_pages; $page++) {
     $issues_data = get_open_issues($page);
@@ -234,7 +241,7 @@ for ($page = 1; $page <= $total_pages; $page++) {
         $cusaCode = extract_cusaCode($title);
         $avifIconURL = "/home/{$serverUsername}/domains/fpps4.net/public_html/images/CUSA/{$cusaCode}.avif";
 
-        // Check if cusa code is empty
+        // Check if cusa code is not empty
         if ($cusaCode) {
             $query = "SELECT cusaCode FROM newIssues WHERE cusaCode = :cusaCode";
             $stmt = $conn->prepare($query);
@@ -266,7 +273,21 @@ for ($page = 1; $page <= $total_pages; $page++) {
             } else {
                 $images_skiped++;
             }
+
+        } else if (in_array("app-homebrew", array_column($issue['labels'], 'name'))) {
+            $query = "SELECT title FROM newIssues WHERE title = :title";
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(':title', $title, PDO::PARAM_STR);
+            $stmt->execute();
+            $checkTitle = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
+            if (count($checkTitle) > 0) {
+                $total_skipped++;
+                continue;
+            }
+            $total_processed++;
+            $homebrewProcessed++;
+            insert_issue($issue, $conn);
         } else {
             $CUSA_total_skipped++;
             continue;
@@ -315,6 +336,7 @@ print "<br>Total pages: " . $total_pages;
 print "<br>Total open issues: " . $open_issues_count;
 print "<br>Total issues without CUSA: " . $CUSA_total_skipped;
 print "<br>Total issues processed: " . $total_processed;
+print "<br>Homebrew's processed: " . $homebrewProcessed;
 print "<br>Total duplicates: " . $total_skipped;
 print "<br>Total images downloaded: " . $images_downloaded;
 print "<br>Total images skipped: " . $images_skiped;

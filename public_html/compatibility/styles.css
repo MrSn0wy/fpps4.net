@@ -90,7 +90,7 @@ body{
   background: var(--main0);
   border-radius: 6px;
   margin-top: 6rem;
-  padding: 2rem 0 0;
+  padding: 2rem 0 1rem;
   width: 40rem;
   border: 0.2rem solid var(--main0);
 }
@@ -340,7 +340,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .pageBarContainer {
   display: flex;
-  padding: 0.8rem 0 1.5rem;
+  padding: 0.8rem 0 2rem;
   gap: 0.35rem;
   text-align: center;
   height: 2rem;
