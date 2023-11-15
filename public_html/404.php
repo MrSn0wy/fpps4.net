@@ -2,7 +2,7 @@
 <HTML><HEAD>
 <TITLE>404 :/</TITLE>
 <style>@import url('https://fonts.googleapis.com/css2?family=Montserrat');</style>
-<link rel="icon" href="https://fpps4.net/images/fpPS4-icon.png" type="image/png">
+<link rel="icon" href="https://fpps4.net/images/fpPS4Logo.png" type="image/png">
 <meta name="robots" content="noindex">
 </HEAD><BODY style="background-color: #0e141b; color: white; font-family: 'Montserrat', sans-serif; text-align: center;">
 <H1>404: Not Found :/</H1>

@@ -18,6 +18,16 @@ let updatePageValue = false;
 let noImagesLocked = false;
 let maxValue;
 
+var urlParams = new URLSearchParams(window.location.search);
+var tagParam = urlParams.get('tag');
+if (tagParam) {
+  tagFilter.push(tagParam);
+  tagElementForFilter = document.getElementById(tagParam + 'Bar');
+  tagParentForFilter = tagElementForFilter.parentElement;
+  tagParentForFilter.classList.toggle('selected');
+}
+
+
 function setCookie(name, value) {
   var date = new Date();
   date.setMonth(date.getMonth() + 1);
@@ -101,7 +111,7 @@ avif.onerror = function() {
 
 // Page Load
 document.addEventListener('DOMContentLoaded', function() {
-  fetch('https://fpps4.net/scripts/search.php?q=&stats')
+  fetch('https://fpps4.net/scripts/search.php?q=&stats&tag='+ tagFilter)
   .then(response => response.text())
   .then(data => {
     document.querySelector('#gameWrapper').innerHTML = data;
@@ -190,7 +200,6 @@ function UpdateSearchResults() {
 // Filters
 function filter() {
   var ids = ['Nothing', 'Boots', 'Menus', 'Ingame', 'Playable'];
-
   ids.forEach(id => {
     element = document.getElementById(id + 'Bar');
     parent = element.parentElement;

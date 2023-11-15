@@ -1,3 +1,7 @@
 User-agent: *
 Allow: /
+
+User-agen: GPTBot
+Disallow: /
+
 Sitemap: https://fpps4.net/sitemap.xml

@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 $serverUsername = getenv('USERNAME');
 require_once "/home/{$serverUsername}/domains/fpps4.net/config/config.php"; // import config file
 $validSecret = ACCESS_SECRET;
@@ -13,8 +15,39 @@ $password = DATABASE_PASSWORD;
 $database = DATABASE_NAME;
 $githubToken = GITHUB_TOKEN;
 $tmdbHash = TMDB_HASH;
+$homebrewUseragent = HB_USERAGENT;
 
 try {
+    // get homebrew db for images
+    $header = stream_context_create(["http" => ["header" => "User-Agent: $homebrewUseragent\r\n"]]);
+    $response = file_get_contents("https://api.pkg-zone.com/api.php?db_check_hash=true", false, $header);
+    if ($response !== false) {
+        $data = json_decode($response);
+        $hash = $data->hash;
+        $md5Hash = md5_file("/home/{$serverUsername}/domains/fpps4.net/public_html/scripts/HBstore.db"); // will give warning on first download
+        if ($hash === $md5Hash) {
+            echo("the db is the same! response: $hash local: $md5Hash <br>");
+        } else {
+            echo("the db is diffrent! response: $hash local: $md5Hash downloading db <br>");
+            $fileContent = file_get_contents("https://api.pkg-zone.com/store.db", false, $header);
+            if ($fileContent !== false) {
+                file_put_contents("/home/{$serverUsername}/domains/fpps4.net/public_html/scripts/HBstore.db", $fileContent) !== false ?  die("DB downloaded and saved successfully.<br>") : die("Error saving the downloaded DB.<br>");
+            } else {
+                die("Error downloading the DB from the URL.");
+            }
+        }
+    } else {
+        echo("Error verifying hash, ignoring for now.");
+    }
+
+    $dbFile = "/home/{$serverUsername}/domains/fpps4.net/public_html/scripts/HBstore.db";
+    try {
+        $homebrewDB = new PDO("sqlite:$dbFile");
+        echo "Connected to the database successfully! <br>";
+    } catch (PDOException $e) {
+        echo "Connection failed: " . $e->getMessage() . "<br>";
+    }
+
     $conn = new PDO("mysql:host=$host;dbname=$database", $username, $password);
     $conn->query("DROP TABLE IF EXISTS newIssues");
 
@@ -36,13 +69,14 @@ try {
     )";
 
     $sqlSkips = "CREATE TABLE IF NOT EXISTS GameSkips (
-        cusaCode VARCHAR(10) PRIMARY KEY
+        code VARCHAR(130) PRIMARY KEY
     )";
 
     $conn->exec($sqlOld);
     $conn->exec($sqlNew);
     $conn->exec($sqlSkips);
     echo "Tables created successfully.<br>";
+    // die("Tables created successfully.<br>");
     
 } catch (PDOException $e) {
     die("Error creating tables: " . $e->getMessage());
@@ -104,6 +138,15 @@ function insert_issue($issue, $conn) {
         $cusaCode = "HOMEBREW";
         $clean_title = preg_replace('/\s-\s.*$/', '', $title);
         $clean_title = trim(explode('(Homebrew)', $clean_title)[0]);
+        $clean_title = trim(explode('Homebrew', $clean_title)[0]);
+        //$clean_title = trim(explode('Game', $clean_title)[0]);
+        $clean_title = rtrim($clean_title, ' ');
+    } else if (in_array("app-system-fw505", array_column($issue['labels'], 'name'))){
+        $cusaCode = "SYSTEM APP";
+        $clean_title = preg_replace('/\s-\s.*$/', '', $title);
+    } else if (in_array("app-ps2game", array_column($issue['labels'], 'name'))){
+        $cusaCode = "PS2 GAME";
+        $clean_title = preg_replace('/\s-\s.*$/', '', $title);
     } else {
         $clean_title = preg_replace('/\b' . preg_quote($cusaCode, '/') . '\b/', '', $title);
         $clean_title = preg_replace('/\s+-\s+/', ' - ', $clean_title);
@@ -168,62 +211,95 @@ function extract_cusaCode($title) {
 }
 
 // Images logic
-function get_image($cusaCode, $conn, $serverUsername) {
-    global $tmdbHash;
-    $key = hex2bin($tmdbHash);
-    $hashme = $cusaCode . '_00';
-    $hash = strtoupper(hash_hmac('sha1', $hashme, $key));
-    $url = "https://tmdb.np.dl.playstation.net/tmdb2/{$cusaCode}_00_{$hash}/{$cusaCode}_00.json";
+function get_image($cusaCode, $homebrewDB) {
+    global $issue;
+    global $serverUsername;
+    global $conn;
+    global $homebrewUseragent;
+    //global $homebrewDB;
+    $iconUrl = '';
+    $avifIconURL = '';
+    echo "           DEBUG: $cusaCode";
 
-    $headers = get_headers($url);
-    if ($headers !== false && strpos($headers[0], '200') !== false) {
-        $response = file_get_contents($url);
-        if ($response !== false) {
-            $data = json_decode($response, true);
-            if (isset($data['icons']) && is_array($data['icons']) && count($data['icons']) > 0) {
-                $iconUrl = $data['icons'][0]['icon'];
-                $httpsIconUrl = str_replace('http://', 'https://', $iconUrl);
-                $imagick = new Imagick();
+    try {
+            if (in_array("app-homebrew", array_column($issue['labels'], 'name'))) {
 
-                $avifIconURL = "/home/{$serverUsername}/domains/fpps4.net/public_html/images/CUSA/{$cusaCode}.avif";
-                $result = null;
-                if ($imagick->readImage($httpsIconUrl)) {
-                    $imageFormat = $imagick->getImageFormat();
-                    if ($imageFormat == 'JPEG' || $imageFormat == 'PNG') {
-                        $imagick->setImageFormat('avif');
-                        $imagick->setCompressionQuality(75);
-                        $imagick->setImageProperty('avif:effort', '10');
-                        $imagick->setImageProperty('avif:speed', '8');
-                        $imagick->thumbnailImage(128, 128, true);
-                        $imagick->setImageProperty('avif:strip', '');
-                        // Compress and save the image
-                        if ($imagick->writeImage($avifIconURL)) {
-                            $result = $avifIconURL;
-                        } else {
-                            $result = null;
-                        }
+                $query = "SELECT image FROM homebrews WHERE name = :name";
+                $statement = $homebrewDB->prepare($query);
+                $statement->bindParam(':name', $cusaCode);
+                $statement->execute();
+                $result = $statement->fetch(PDO::FETCH_ASSOC);
+                //var_dump("image link: $result <br>");
+                //echo "image link: $result <br>" ;
+//                if ($result !== false) {
+                    if (!empty($result)) {
+                        $iconUrl = $result['image'];
+                        //echo "Image link: $iconUrl<br>";
+                        var_dump("image link: $iconUrl <br>");
+                        $avifIconURL = "/home/{$serverUsername}/domains/fpps4.net/public_html/images/HOMEBREW/{$cusaCode}.avif";
+                        $header = stream_context_create(["http" => ["header" => "User-Agent: $homebrewUseragent\r\n"]]);
+                        $httpsIconUrl = str_replace('http://', 'https://', $iconUrl);
+                        $imageData = file_get_contents($httpsIconUrl, false, $header);
                     } else {
-                        $result = null;
+                        echo "No record found for the given name.<br>";
+                        throw new Exception();
                     }
-                } else {
-                    $result = null;
-                }
-                $imagick->clear();
-                $imagick->destroy();
-                return $result;
+//                } else {throw new Exception();}
+            } else {
+                global $tmdbHash;
+                $key = hex2bin($tmdbHash);
+                $hashme = $cusaCode . '_00';
+                $hash = strtoupper(hash_hmac('sha1', $hashme, $key));
+                $url = "https://tmdb.np.dl.playstation.net/tmdb2/{$cusaCode}_00_{$hash}/{$cusaCode}_00.json";
+                $userAgent = 'Mozilla/5.0 (PlayStation; PlayStation 4/10.71) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Safari/605.1.15';
+                $PS4header = stream_context_create(["http" => ["header" => "User-Agent: $userAgent\r\n"]]); // ps4 useragent cuz im silly
+                $headers = get_headers($url, false, $PS4header);
+                if ($headers !== false && strpos($headers[0], '200') !== false) {
+                    $response = file_get_contents($url, false, $PS4header);
+                    if ($response !== false) {
+                        $data = json_decode($response, true);
+                        if (isset($data['icons']) && is_array($data['icons']) && count($data['icons']) > 0) {
+                            $iconUrl = $data['icons'][0]['icon'];
+                            $avifIconURL = "/home/{$serverUsername}/domains/fpps4.net/public_html/images/CUSA/{$cusaCode}.avif";
+                            $httpsIconUrl = str_replace('http://', 'https://', $iconUrl);
+                            $imageData = file_get_contents($httpsIconUrl, false, $PS4header);
+                        } else {throw new Exception();}
+                    } else {throw new Exception();}
+                } else {throw new Exception();} 
             }
+
+
+            $imagick = new Imagick();
+            if ($imagick->readImageBlob($imageData)) {
+                $imageFormat = $imagick->getImageFormat();
+                if ($imageFormat == 'JPEG' || $imageFormat == 'PNG') {
+                    $imagick->setImageFormat('avif');
+                    $imagick->setCompressionQuality(75);
+                    $imagick->setImageProperty('avif:effort', '10');
+                    $imagick->setImageProperty('avif:speed', '8');
+                    $imagick->thumbnailImage(128, 128, true);
+                    $imagick->setImageProperty('avif:strip', '');
+                    $imagick->writeImage($avifIconURL); // save the image
+                }
+            }
+            $imagick->clear();
+            $imagick->destroy();
+
+        } catch (Exception $e) {
+                echo "<p style='color: red;'>$cusaCode got an error while downloading, $e </p><br>";
+                    $columnName = "code";
+                    $insertQuery = "INSERT INTO GameSkips ($columnName) VALUES (:value1)";
+                    $stmt = $conn->prepare($insertQuery);
+                    $stmt->bindParam(':value1', $cusaCode, PDO::PARAM_STR);
+                    if (!$stmt->execute()) {
+                        die("Error inserting issue: " . $stmt->errorInfo()[2]);
+                    }          
         }
-    }
-    // Write the skipped $cusaCode to the database
-    $skippedCode = $conn->quote($cusaCode);
-    $insertQuery = "INSERT INTO gameSkips (cusaCode) VALUES ($skippedCode)";
-    $conn->exec($insertQuery);
-    return null;
 }
 //- Images logic
 
 $gh_api_total = 0;
-$open_issues_count = get_open_issues_count($gh_api_total);
+$open_issues_count = get_open_issues_count();
 $total_pages = ceil($open_issues_count / 100);
 $total_processed = 0;
 $total_skipped = 0;
@@ -231,6 +307,10 @@ $CUSA_total_skipped = 0;
 $images_downloaded = 0;
 $images_skiped = 0;
 $homebrewProcessed = 0;
+$systemProcessed = 0;
+$ps2Processed = 0;
+$HB_images_downloaded = 0;
+$HB_images_skiped = 0;
 
 for ($page = 1; $page <= $total_pages; $page++) {
     $issues_data = get_open_issues($page);
@@ -258,23 +338,70 @@ for ($page = 1; $page <= $total_pages; $page++) {
             insert_issue($issue, $conn);
 
             if (!file_exists($avifIconURL)) {   // check for images
-                $query = "SELECT cusaCode FROM GameSkips WHERE cusaCode = :cusaCode";
+                // ECHO "<br> DEBUG: I AM GETTING CHECKED. $cusaCode <br>";
+                $query = "SELECT code FROM GameSkips WHERE code = :code";
                 $stmt = $conn->prepare($query);
-                $stmt->bindParam(':cusaCode', $cusaCode, PDO::PARAM_STR);
+                $stmt->bindParam(':code', $cusaCode, PDO::PARAM_STR);
                 $stmt->execute();
+                // ECHO "<br> DEBUG: I HAVE BEEN CHECKED. $cusaCode <br>";
             
                 if ($stmt->rowCount() > 0) {
                     $images_skiped++;
                     continue;
+                    // ECHO "<br> DEBUG: I HAVE BEEN SKIPPED. $cusaCode <br>";
                 } else {
-                    get_image($cusaCode, $conn, $serverUsername); // Download image
+                    get_image($cusaCode, $homebrewDB); // Download image
                     $images_downloaded++;
+                    // ECHO "<br> DEBUG: I HAVE BEEN DOWNLOADED. $cusaCode <br>";
                 }
             } else {
                 $images_skiped++;
             }
 
+            // HOMEBREW GAMES/APPS
         } else if (in_array("app-homebrew", array_column($issue['labels'], 'name'))) {
+            $hb_title = preg_replace('/\s-\s.*$/', '', $title);
+            $hb_title = trim(explode('(Homebrew)', $hb_title)[0]);
+            $hb_title = trim(explode('Homebrew', $hb_title)[0]);
+            //$hb_title = trim(explode('Game', $hb_title)[0]);
+            $hb_title = rtrim($hb_title, ' ');
+
+            $query = "SELECT title FROM newIssues WHERE title = :title";
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(':title', $hb_title, PDO::PARAM_STR);
+            $stmt->execute();
+            $checkTitle = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if (count($checkTitle) > 0) {
+                $total_skipped++;
+                continue;
+            }
+
+            if (!file_exists("/home/{$serverUsername}/domains/fpps4.net/public_html/images/HOMEBREW/{$hb_title}.avif")) {  // check for images
+                // $query = "SELECT cusaCode FROM GameSkips WHERE homeBrew = :homeBrew";
+                $query = "SELECT code FROM GameSkips WHERE code = :code";
+                $stmt = $conn->prepare($query);
+                $stmt->bindParam(':code', $hb_title, PDO::PARAM_STR);
+                $stmt->execute();
+                $check_result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                
+                if (count($check_result) > 0) {
+                    $HB_images_skiped++;
+                    // echo "$hb_title is skipped <br>";
+                } else {
+                    get_image($hb_title, $homebrewDB); // Download image
+                    $HB_images_downloaded++;
+                    // echo "$hb_title getting downloaded <br>";
+                }
+            } else {
+                $HB_images_skiped++;
+                // echo "$hb_title exists <br>";
+            }
+
+            insert_issue($issue, $conn);
+            $total_processed++;
+            $homebrewProcessed++;
+
+        } else if (in_array("app-system-fw505", array_column($issue['labels'], 'name'))){
             $query = "SELECT title FROM newIssues WHERE title = :title";
             $stmt = $conn->prepare($query);
             $stmt->bindParam(':title', $title, PDO::PARAM_STR);
@@ -286,10 +413,26 @@ for ($page = 1; $page <= $total_pages; $page++) {
                 continue;
             }
             $total_processed++;
-            $homebrewProcessed++;
+            $systemProcessed++;
+            insert_issue($issue, $conn);
+            
+        } else if (in_array("app-ps2game", array_column($issue['labels'], 'name'))){
+            $query = "SELECT title FROM newIssues WHERE title = :title";
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(':title', $title, PDO::PARAM_STR);
+            $stmt->execute();
+            $checkTitle = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            if (count($checkTitle) > 0) {
+                $total_skipped++;
+                continue;
+            }
+            $total_processed++;
+            $ps2Processed++;
             insert_issue($issue, $conn);
         } else {
             $CUSA_total_skipped++;
+            //echo "<a href='https://github.com/red-prig/fpps4-game-compatibility/issues/" . $issue['number'] . "' target='_blank'>https://github.com/red-prig/fpps4-game-compatibility/issues/" . $issue['number'] . "</a><br>";
             continue;
         }
     }
@@ -337,9 +480,13 @@ print "<br>Total open issues: " . $open_issues_count;
 print "<br>Total issues without CUSA: " . $CUSA_total_skipped;
 print "<br>Total issues processed: " . $total_processed;
 print "<br>Homebrew's processed: " . $homebrewProcessed;
+print "<br>System Apps processed: " . $systemProcessed;
+print "<br>PS2 Games processed: " . $ps2Processed;
 print "<br>Total duplicates: " . $total_skipped;
 print "<br>Total images downloaded: " . $images_downloaded;
 print "<br>Total images skipped: " . $images_skiped;
+print "<br>Total homebrew images downloaded: " . $HB_images_downloaded;
+print "<br>Total homebrew images skipped: " . $HB_images_skiped;
 print "<br>Total github api requests: " . $gh_api_total;
 
 // Fake 404 page vv
