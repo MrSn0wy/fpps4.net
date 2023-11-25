@@ -41,7 +41,7 @@
   background-color: yellow;
 } */
 
-.Nothing {--status-color: #1F2325;}
+.Nothing, .N\/A {--status-color: #1F2325;}
 .Boots {--status-color: #F2766E;}
 .Menus {--status-color:  #4288B7;}
 .Ingame {--status-color: #fabb44;}
@@ -163,34 +163,24 @@ body{
   font-size: 0.9rem;
   transition: opacity 0.15s ease-in-out;
 }
+.selected .progressBarInfo{opacity: 1;}
 .selected, .selected:hover {background: var(--selected) !important;}
 /*- PROGRESS BAR*/
 
 
 .searchBarContainer {display: flex;}
-.searchBar,
-.pageSelector {
+.searchBar {
   padding-left: 1rem;
-  /* width: 19.4rem; */
+  width: 18.4rem;
   height: 2.15rem;
   margin: 1.9rem 0 0.3rem;
   background: var(--main1);
   border: 0.05rem solid var(--border);
-  /* border-radius: 0.6rem; */
+  border-radius: 0.6rem;
   line-height: 0;
   font-size: 0.9rem;
 }
 
-.searchBar {
-  width: 14.3rem;
-  border-radius: 0.6rem 0rem 0rem 0.6rem;
-}
-
-.pageSelector {
-  width: 3rem;
-  border-radius: 0rem 0.6rem 0.6rem 0rem;
-  font-weight: 500;
-}
 
 input[type="number"] {
   -moz-appearance: textfield;
@@ -277,13 +267,26 @@ input[type="number"]::-webkit-outer-spin-button {
   border-radius: 0.6rem 0.4rem 0.4rem 0.6rem;
   overflow: hidden;
 }
-
+.gameImageText,
 .gameImage {
   width: 5.3rem;
   height: 5.3rem;
   max-width: 5.3rem;
   border-radius: 0.5rem 0.4rem 0.4rem 0.5rem;
   transition: transform 0.2s ease-in-out;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.gameImageText {
+  background: #1F2325;
+  font-weight: 500;
+  /* display: flex; */
+  align-content: center;
+  text-align: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  color: white;
+  user-select: none;
 }
 
 .gameSeparator {
@@ -409,7 +412,6 @@ input[type="number"]::-webkit-outer-spin-button {
 @media screen and (max-width: 550px) {
   .optionButton:hover {background: var(--main1);}
   .progressWrap:hover, .progressWrapb:hover {background: var(--main1);}
-  .selected .progressBarInfo{opacity: 1;}
   .menu-icon:hover, .gh-logo:hover, .dc-logo:hover, .lightModeButton:hover, .logo:hover {background-color: #00000000 !important;}
   .pageBarImage:hover {background-color: transparent !important;}
   .gameDetails:hover .gameName {width: 23rem !important;}

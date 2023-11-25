@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>fpPS4 - Compatibility List</title>
   <meta property="title" content="Game Compatibility List">
   <meta property="og:title" content="fpPS4 - Game Compatibility List">
@@ -17,7 +17,7 @@
   <meta name="robots" content="index,follow">
   <meta name="author" content="Mr. Snowy">
   <link rel="stylesheet" href="./styles.css">
-  <link rel="icon" href="https://fpps4.net/images/fpPS4Logo.png" type="image/png">
+  <link rel="icon" href="/_images/fpPS4Logo.png" type="image/png">
 </head>
 <style>
   /* fixes page load stuff */
@@ -48,13 +48,12 @@
   <div class="searchContainer">
     <div class="searchBarContainer">
       <input autocomplete="off" type="text" name="fpps4" class="searchBar" id="search" placeholder="Search TITLE / CUSA">
-      <input autocomplete="off" type="number" min="1" placeholder="1/1" name="fpps4" class="pageSelector" id="search2">
     </div>
     
     <div class="optionButtons">
       <div onclick="sortButton(this)" class="optionButton">Oldest</div>
-      <div id="imageButton" onclick="imageButton()" class="optionButton">No Images</div>
-      <div id="datesButton" onclick="dateButton()" class="optionButton">Dates</div>
+      <div id="imageButton" onclick="imageButton(this)" class="optionButton">No Images</div>
+      <div id="datesButton" onclick="dateButton(this)" class="optionButton">Dates</div>
     </div>
   </div>
   <div id="gameWrapper" class="gameWrapper">
@@ -81,11 +80,11 @@
     <h4 class="totalTimeText">0 results in 0ms </h4>
   </div>
   <div class="pageBarContainer">
-    <img class="pageBarImage" id="pageBarBack" onclick="pageBarBack()" src="../images/arrow_back.svg" alt="">
-    <p class="pageBarButton" id="pageBarMin" onclick="pageBarMin()">1</p>
-    <input class="pageBarSearch" id="search3" autocomplete="off" type="number" min="1" placeholder="..." name="fpps4">
-    <p class="pageBarButton" id="pageBarMax" onclick="pageBarMax()">1</p>
-    <img class="pageBarImage" id="pageBarForward" onclick="pageBarForward()" src="../images/arrow_forward.svg" alt="">
+    <img class="pageBarImage" id="pageBarBack" onclick="pageButtonHandler('back')" src="/_images/arrow.svg" alt="">
+    <p class="pageBarButton" id="pageBarMin" onclick="pageButtonHandler('min')">1</p>
+    <input class="pageBarSearch" id="search3" autocomplete="off" type="number" min="1" placeholder="..." name="fpps4" oninput="pageButtonHandler('input')">
+    <p class="pageBarButton" id="pageBarMax" onclick="pageButtonHandler('max')">1</p>
+    <img class="pageBarImage" id="pageBarForward" onclick="pageButtonHandler('forward')" src="/_images/arrow.svg" alt="" style="rotate: 180deg;">
   </div>
   <h5 style="text-align: center; font-size: 0.8rem;">Trademarks and logos displayed on this website are the property of their respective owners.<br> The use of any third-party trademarks, brand names, product names, and logos is for<br> informational purposes only and does not imply endorsement or sponsorship.</h5>
   <br>
@@ -98,6 +97,7 @@
     }
   </style>
 </footer>
-<script defer src="app.js"></script>
+<script defer src="/_parts/required.js"></script>
+<script defer src="./app.js"></script>
 </body>
 </html>
