@@ -1,0 +1,24 @@
+[package]
+name = "fpps4_backend"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+regex = "1.11"
+ureq = { version = "2.10", default-features = false, features = ["json", "tls", "gzip"] }
+crossbeam-queue = "0.3"
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+# images
+rgb = { version = "0.8", default-features = false }
+load_image = "3.2"
+ravif = { version = "0.11", default-features = false }
+fast_image_resize = { version = "5.0", features = ["only_u8x4", "rayon"] }
+hmac = "0.13.0-pre.4"
+sha1 = "0.11.0-pre.4"
+hex = "0.4.3"
+chrono = "0.4.38"
+md-5 = "0.10"

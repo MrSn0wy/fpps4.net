@@ -3,25 +3,23 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-struct Issues {
-    issues: Vec<Issue>,
+#[derive(Serialize, Deserialize)]
+#[derive(Debug)]
+pub(crate) struct Issue {
+    pub(crate) id: u64,
+    pub(crate) code: String,
+    pub(crate) title: String,
+    pub(crate) labels: Vec<String>,
+    pub(crate) status: Status,
+    pub(crate) issue_type: GameType,
+    pub(crate) created: String,
+    pub(crate) updated: String,
+    pub(crate) image: bool,
 }
 
-// #[derive(Serialize, Deserialize)]
-struct Issue {
-    id: u64,
-    code: String,
-    title: String,
-    labels: Vec<String>,
-    status: Status,
-    issue_type: GameType,
-    created: String,
-    updated: String,
-    // image: bool,
-}
-
-// #[derive(Serialize, Deserialize)]
-enum GameType {
+#[derive(Serialize, Deserialize)]
+#[derive(Debug)]
+pub(crate) enum GameType {
     Game,
     Homebrew,
     Ps2game,
@@ -29,8 +27,9 @@ enum GameType {
     SystemFwUnknown,
 }
 
-// #[derive(Serialize, Deserialize)]
-enum Status {
+#[derive(Serialize, Deserialize)]
+#[derive(Debug)]
+pub(crate) enum Status {
     Playable,
     Ingame,
     Menus,
@@ -38,7 +37,7 @@ enum Status {
     Nothing,
 }
 
-fn parse_github_issue(issue: Value, code_regex: Regex) -> anyhow::Result<(Issue, Vec<String>)> {
+pub(crate) fn parse_github_issue(issue: &Value, code_regex: &Regex) -> anyhow::Result<(Issue, Vec<String>)> {
     let mut warning: Vec<String> = vec![];
 
     let id: u64 = issue
@@ -52,14 +51,14 @@ fn parse_github_issue(issue: Value, code_regex: Regex) -> anyhow::Result<(Issue,
             .and_then(Value::as_str)
             .context("Failed to parse title")?;
 
-        if code_regex.captures(&title).iter().len() != 1 {
+        if code_regex.captures(title).iter().len() > 1 {
             warning.push(String::from("More than one title id has been matched")); // add a warning
         }
 
         code_regex
-            .find(&title)
+            .find(title)
             .map(|x| x.as_str().to_uppercase())
-            .context("Failed to get code using regex")?
+            .unwrap_or_default() // unwrap_or_default, otherwise homebrews or others will fail!
     };
 
     let title: String = {
@@ -76,15 +75,20 @@ fn parse_github_issue(issue: Value, code_regex: Regex) -> anyhow::Result<(Issue,
             || title.contains("Homebrew")
             || title.contains("[]")
         {
-            warning.push(String::from("Title not correctly formatted")); // add a warning
-
-            title = title.replace("(Homebrew)", "");
-            title = title.replace("- HOMEBREW",    "");
-            title = title.replace("Homebrew", "");
-            title = title.replace("[]", "");
+            // warning.push(String::from("Title not correctly formatted")); // add a warning
         }
 
         title
+            .replace("- HOMEBREW",    "")
+            .replace("Homebrew", "")
+            .replace("[]", "")
+            .replace("(Homebrew)", "")
+            .trim()
+            .trim_end_matches('-')
+            .trim()
+            .to_string()
+
+        // title
     };
 
     let mut labels: Vec<&str> = issue
@@ -97,6 +101,13 @@ fn parse_github_issue(issue: Value, code_regex: Regex) -> anyhow::Result<(Issue,
                 .and_then(Value::as_str)
                 .unwrap_or_default())
             .collect::<Vec<&str>>();
+    
+    // bail if any are invalid
+    if labels.iter().any(|label| *label == "question") {
+        bail!("Ignoring!")
+    } else if labels.iter().any(|label| *label == "invalid") {
+        bail!("invalid!")
+    }
 
 
     let status: Status = {
@@ -133,7 +144,7 @@ fn parse_github_issue(issue: Value, code_regex: Regex) -> anyhow::Result<(Issue,
         if labels.contains(&"status-") 
         {
             warning.push(String::from("More than one status label")); // add a warning
-            labels = labels.into_iter().filter(|x| !x.starts_with("status-")).collect();
+            labels.retain(|x| !x.starts_with("status-"));
         }
 
         status
@@ -224,6 +235,7 @@ fn parse_github_issue(issue: Value, code_regex: Regex) -> anyhow::Result<(Issue,
         issue_type,
         created,
         updated,
+        image: false,
     };
 
     Ok((new_issue, warning))

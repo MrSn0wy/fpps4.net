@@ -1,8 +1,15 @@
+use std::fs;
+use std::path::Path;
+use std::sync::{Arc, Mutex};
+use anyhow::bail;
 use fast_image_resize::images::Image;
 use fast_image_resize::{FilterType, PixelType, ResizeAlg, ResizeOptions, Resizer, SrcCropping};
 use load_image::export::imgref::ImgVec;
 use ravif::{AlphaColorMode, ColorSpace, EncodedImage, Encoder, Img, RGBA8};
-use load_image::ImageData;
+use rusqlite::Connection;
+use crate::{networking, println_green};
+use crate::macros::PolarResultUnwrap;
+use crate::parsing::{GameType, Issue};
 
 const RESIZE_OPTIONS: ResizeOptions = ResizeOptions {
     algorithm: ResizeAlg::Convolution(FilterType::Lanczos3),
@@ -10,7 +17,7 @@ const RESIZE_OPTIONS: ResizeOptions = ResizeOptions {
     mul_div_alpha: true,
 };
 
-pub(crate) fn convert_image(image_data: Vec<u8>) -> anyhow::Result<Vec<u8>> {
+fn convert_image(image_data: Vec<u8>) -> anyhow::Result<Vec<u8>> {
     
     let quality: f32 = 60f32;
     let alpha_quality = ((quality + 100.)/2.).min(quality + quality/4. + 2.);
@@ -22,8 +29,6 @@ pub(crate) fn convert_image(image_data: Vec<u8>) -> anyhow::Result<Vec<u8>> {
 
     let cropped_image = crop_image(img)?;
 
-    // let img: Img<Vec<u8>> = Img::new(cropped_image, 128,128);
-
     let rgba_pixels: Vec<RGBA8> = cropped_image
         .chunks(4)
         .map(|chunk| RGBA8 {
@@ -34,12 +39,7 @@ pub(crate) fn convert_image(image_data: Vec<u8>) -> anyhow::Result<Vec<u8>> {
         })
         .collect();
 
-    let img = Img::new(rgba_pixels, 128,128);
-    // let img = load_rgba(cropped_image)?;
-
-    // let img_vec = bytemuck::cast_slice(&img.clone().into_buf());
-    // fs::write("./cropped.png", dst_image.buffer())?;
-    // let resized_img = load_rgba(dst_image.buffer())?;
+    let img = Img::new(rgba_pixels, 256,256);
     
 
     let enc = Encoder::new()
@@ -51,10 +51,11 @@ pub(crate) fn convert_image(image_data: Vec<u8>) -> anyhow::Result<Vec<u8>> {
         .with_alpha_color_mode(AlphaColorMode::UnassociatedClean)
         .with_num_threads(None);
 
-    let EncodedImage { avif_file, color_byte_size, alpha_byte_size , .. } = enc.encode_rgba(img.as_ref())?;
+    let EncodedImage { avif_file, .. } = enc.encode_rgba(img.as_ref())?;
     
     Ok(avif_file)
 }
+
 
 fn load_rgba(data: Vec<u8>) -> anyhow::Result<ImgVec<RGBA8>> {
     use rgb::prelude::*;
@@ -73,21 +74,6 @@ fn load_rgba(data: Vec<u8>) -> anyhow::Result<ImgVec<RGBA8>> {
     };
     
     Ok(img)
-}
-fn load_rgba_test() -> anyhow::Result<(Vec<RGBA8>, usize, usize)> {
-    let image = load_image::load_path("./image.png")?;
-
-    let width = image.width;
-    let height = image.height;
-
-
-    let img = match image.bitmap {
-        ImageData::RGBA8(img) => img,
-        ImageData::RGB8(img) =>  img.iter().map(|buf| buf.with_alpha(255)).collect(),
-        _ => todo!()
-    };
-
-    Ok((img,width,height))
 }
 
 
@@ -115,24 +101,71 @@ fn crop_image(image_data: ImgVec<RGBA8>) -> anyhow::Result<Vec<u8>> {
     let mut resizer = Resizer::new();
     resizer.resize(&src_image, &mut cropped_image, &RESIZE_OPTIONS)?;
 
-    // let file = File::create("./cropped.png")?;
-    // let ref mut w = BufWriter::new(file);
-    // let mut encoder = PngEncoder::new(w, 128u32, 128u32);
-    // encoder.set_color(png::ColorType::Rgba);
-    // encoder.set_depth(png::BitDepth::Eight);
-    //
-    // let mut writer = encoder.write_header()?;
-    //
-    // // Write the image data (RGBA)
-    // writer.write_image_data(cropped_image.buffer())?;
-
-
-    // let (image, width, height) = load_rgba_test().unwrap();
-    //
-    // let raw_pixels: &[u8] = bytemuck::cast_slice(&image);
-    //
-    // assert_eq!(raw_pixels.len(), (width * height * 4) as usize, "Invalid buffer size!");
-    //
-
     Ok(cropped_image.into_vec())
+}
+
+
+pub fn get_converted_image_data(issue: &mut Issue, images_path: &str, homebrew_db: Arc<Mutex<Connection>>, homebrew_token: &str) -> Result<(), anyhow::Error> {
+
+    // get the images based on what the game type is
+    match issue.issue_type {
+        GameType::Game => {
+            let path = format!("{}/game/{}.avif", images_path, issue.code);
+
+            if Path::new(&path).exists() {
+                return Ok(());
+            }
+
+            // DOWNLOAD IMAGE ;3
+            let data =  networking::get_game_image_data(&issue.code)?;
+            let avif_image = convert_image(data)?;
+
+
+            // maybe maybe maybe
+            fs::write(path, avif_image).polar_unwrap("Error writing image!", true);
+
+            issue.image = true;
+            println_green!("Downloaded and saved image for {}", issue.code);
+
+            Ok(())
+        }
+        GameType::Homebrew => {
+            let path = format!("{}/homebrew/{}.avif", images_path, issue.title);
+
+            if Path::new(&path).exists() {
+                return Ok(());
+            }
+
+
+           let homebrew_db =  homebrew_db.lock().polar_unwrap("Issue with mutex, aborting!", true);
+
+            let mut stmt = homebrew_db
+                .prepare("SELECT image FROM homebrews WHERE name = (?1) COLLATE NOCASE")?;
+
+            // black magic
+            let url = {
+                let temp = stmt
+                    .query_map([&issue.title], |row| Ok(row.get::<_, String>(0)))?
+                    .next();
+
+                match temp {
+                    Some(result) => result??,
+                    None => bail!("No image url found for {}", issue.title),
+                }
+            };
+
+            // DOWNLOAD IMAGE ;3
+            let data = networking::image_downloader(url, homebrew_token)?;
+            let avif_image = convert_image(data)?;
+
+            // maybe maybe maybe
+            fs::write(path, avif_image).polar_unwrap("Error writing image!", true);
+
+            issue.image = true;
+            println_green!("Downloaded and saved image for {}", issue.title);
+
+            Ok(())
+        }
+        _ => bail!("No image for the issue_type: {:?}", issue.issue_type),
+    }
 }
