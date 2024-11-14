@@ -93,8 +93,8 @@ fn crop_image(image_data: ImgVec<RGBA8>) -> anyhow::Result<Vec<u8>> {
 
 
     let mut cropped_image = Image::new(
-        128,
-        128,
+        256,
+        256,
         PixelType::U8x4, // RGBA8
     );
 
@@ -113,6 +113,7 @@ pub fn get_converted_image_data(issue: &mut Issue, images_path: &str, homebrew_d
             let path = format!("{}/game/{}.avif", images_path, issue.code);
 
             if Path::new(&path).exists() {
+                issue.image = true;
                 return Ok(());
             }
 
@@ -133,6 +134,7 @@ pub fn get_converted_image_data(issue: &mut Issue, images_path: &str, homebrew_d
             let path = format!("{}/homebrew/{}.avif", images_path, issue.title);
 
             if Path::new(&path).exists() {
+                issue.image = true;
                 return Ok(());
             }
 

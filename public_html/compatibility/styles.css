@@ -232,7 +232,6 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 /*+ GAME CARDS*/
-
 .gameWrapper {width: 95%;}
 
 .gameContainer {
@@ -274,7 +273,7 @@ input[type="number"]::-webkit-outer-spin-button {
   max-width: 5.3rem;
   border-radius: 0.5rem 0.4rem 0.4rem 0.5rem;
   transition: transform 0.2s ease-in-out;
-  image-rendering: -webkit-optimize-contrast;
+  image-rendering: high-quality;
 }
 
 .gameImageText {
@@ -328,10 +327,13 @@ input[type="number"]::-webkit-outer-spin-button {
   margin-top: 0.94rem;
   background-color: var(--status-color);
   border-radius: 0.25rem;
-  text-align: center;
-  line-height: 1.5rem;
   user-select: none;
   color: var(--whiteText);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
 }
 /*- GAME CARDS*/
 

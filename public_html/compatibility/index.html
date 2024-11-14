@@ -8,7 +8,7 @@
   <meta property="title" content="Game Compatibility List">
   <meta property="og:title" content="fpPS4 - Game Compatibility List">
   <meta property="og:description" content="These are the games that have been tested with fpPS4">
-  <meta property="og:image" content="https://fpps4.net/images/fpPS4Logo.png">
+  <meta property="og:image" content="https://fpps4.net/_images/fpPS4Logo512.png">
   <meta property="og:url" content="https://fpps4.net/compatibility">
   <meta name="description" content="These are the games that have been tested with fpPS4">
   <meta name="theme-color" content="#4C566A">
@@ -16,25 +16,29 @@
   <meta name="keywords" content="fpPS4, playstation, ps4, playstation 4, emulator, windows, open source, free pascal, compatibility layer, red-prig, compatibility list, compatibility, fpps4 compatibility list, fpps4 compatibility, fpps4 game compatibility">
   <meta name="robots" content="index,follow">
   <meta name="author" content="Mr. Snowy">
-  <link rel="stylesheet" href="./styles.css">
-  <link rel="icon" href="/_images/fpPS4Logo.png" type="image/png">
-</head>
-<style>
-  /* fixes page load stuff */
-  .progressBarInfo {opacity: 0;}
-</style>
-<body>
-<header id="header">
   <style>
     header {
       position: fixed;
       height: 3rem;
     }
+    footer {
+      height: 3.65rem;
+      margin-top: 3rem;
+    }
+    /* fixes page load stuff */
+    .progressBarInfo {opacity: 0;}
   </style>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="icon" href="/_images/fpPS4Logo.png" type="image/png">
+  <script defer src="/_parts/required.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+<header id="header">
 </header>
 <main class="main">
   <h1 class="mainText">Game Compatibility List</h1>
-  <h3 class="smolMainText">These are the games that have been tested with <span style="color: #f0e74a;">fp</span>PS4.<br>Click on an image to view the game's GitHub issue.<br>The database is updated every 20 minutes.</h3>
+  <h3 class="smolMainText">These are the games that have been tested with <span style="color: #f0e74a;">fp</span>PS4.<br>Click on an image to view the game's GitHub issue.<br>The database is updated every 10 minutes.</h3>
   <div class=progressContainer>
     <div class="progressWrap"><span class="progressBarInfo" id="PlayableInfo"></span><span class="progressBarText">Playable</span><div class="progressBar" id="PlayableBar" style="background:#54A396;"></div></div>
     <div class="progressRow">
@@ -77,7 +81,7 @@
     <div class="gameContainer skeletonAnimation"></div>
     <div class="gameContainer skeletonAnimation"></div>
     <div class="gameContainer skeletonAnimation"></div>
-    <h4 class="totalTimeText">0 results in 0ms </h4>
+    <h4 class="totalTimeText">0 results</h4>
   </div>
   <div class="pageBarContainer">
     <img class="pageBarImage" id="pageBarBack" onclick="pageButtonHandler('back')" src="/_images/arrow.svg" alt="">
@@ -90,14 +94,6 @@
   <br>
 </main>
 <footer id="footer">
-  <style>
-    footer {
-      height: 3.65rem;
-      margin-top: 3rem;
-    }
-  </style>
 </footer>
-<script defer src="/_parts/required.js"></script>
-<script defer src="./app.js"></script>
 </body>
 </html>

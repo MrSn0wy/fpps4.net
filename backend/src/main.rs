@@ -30,7 +30,7 @@ fn main() {
     // update the homebrew database and get a connection
     homebrew_database_updater(HB_DATABASE, &homebrew_token).polar_unwrap("", true);
     let homebrew_db = Connection::open(HB_DATABASE).polar_unwrap("Failed to open SQLite connection to homebrew database!", true);
-    let homebrew_db = Arc::new( Mutex::new(homebrew_db));
+    let homebrew_db = Arc::new( Mutex::new(homebrew_db) );
 
     let (page_count, issues_count): (u64, u64) = networking::github_get_repo_info(&github_token);
 
@@ -44,11 +44,7 @@ fn main() {
 
     let old_game_skips: Arc< Vec<u64> > = {
         match fs::read_to_string(GAME_SKIPS_DATABASE) {
-            Ok(string) => {
-
-                Arc::new(serde_json::from_str(&string).unwrap_or_default())
-
-            }
+            Ok(string) => Arc::new(serde_json::from_str(&string).unwrap_or_default()),
             Err(_) => Arc::new(vec![])
         }
     };
@@ -125,11 +121,11 @@ fn main() {
 
 
     // saves databases
-    let temp_string = serde_json::to_string_pretty(&issues).polar_unwrap("error making issues into a json!", true);
+    let temp_string = serde_json::to_string(&issues).polar_unwrap("error making issues into a json!", true);
     let temp_path = format!("{database_path}/database.json");
     fs::write(temp_path, temp_string).polar_unwrap("Error saving the \"database\" file!", true);
 
-    let temp_string = serde_json::to_string_pretty(&game_skips).polar_unwrap("error making game_skips into a json!", true);
+    let temp_string = serde_json::to_string(&game_skips).polar_unwrap("error making game_skips into a json!", true);
     fs::write(GAME_SKIPS_DATABASE, temp_string).polar_unwrap("Error saving the \"game_skips\" file!", true);
 
     println_green!("dun! {} issues processed", issues.len());

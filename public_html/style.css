@@ -4,7 +4,7 @@
   width: 0.57rem;}
 
 ::-webkit-scrollbar-thumb {
-  background: var(--hover); 
+  background: var(--hover);
   border-radius: 0.13rem;}
 
 ::-webkit-scrollbar-thumb:hover {

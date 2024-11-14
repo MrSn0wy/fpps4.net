@@ -102,3 +102,23 @@ function adjustScreenSize() {
     document.documentElement.style.fontSize = fontSize + 'px';
   }
 }
+
+// Fetch html for footer and header
+async function fetchHtml(path, target){
+  return new Promise((resolve, reject) => {
+    fetch(path).then(response => response.text()).then(data => {
+      document.querySelector(target).innerHTML = data;
+      resolve("done!")
+    }).catch(() => {
+      reject("error occurred while fetching html!")
+    });
+  })
+}
+
+async function init() {
+  // Header & Footer Load
+  await fetchHtml("/_parts/navbar.html", "#header");
+  await fetchHtml("/_parts/footer.html", "#footer");
+
+  LightModeIconChange();
+}
