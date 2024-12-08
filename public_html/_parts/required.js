@@ -115,10 +115,85 @@ async function fetchHtml(path, target){
   })
 }
 
+function snow() {
+  const body = document.querySelector("body");
+  
+  // const snowContainerHTML = `<div style="position: fixed; height: 100%; width: 100% " ></div>`;
+  const snowContainer = document.createElement('div');
+  snowContainer.style.position = "absolute";
+  snowContainer.style.height = "100%";
+  snowContainer.style.width = "100%";
+  snowContainer.style.pointerEvents = "none";
+
+  body.insertBefore(snowContainer, body.firstChild);
+  // snowContainer.outerHTML = snowContainerHTML;
+  
+  function insert_snow(snow_size) {
+    let random_size  = Math.floor(Math.random() * (snow_size - 2) + 2);
+    
+    const snowHTML = `
+    <svg style="position: fixed;" width="${random_size}px" height="${random_size}px" opacity="40%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="50" fill="white"/>
+    </svg>`;
+
+    const snow = document.createElement('svg');
+    snowContainer.appendChild(snow);
+    snow.outerHTML = snowHTML;
+  }
+  
+  let snow_amount = (window.innerWidth / 13 + window.innerHeight / 13) / 2;
+  let snow_size = (window.innerWidth / 230 + window.innerHeight / 230) / 2;
+  
+  console.log(snow_amount)
+  console.log(snow_size)
+  for (let step = 0; step <= snow_amount; step++) {
+    insert_snow(snow_size);
+  }
+  
+  for (let snow of  snowContainer.children) {
+    let random_acceleration = Math.floor(Math.random() * (18 - 8) + 8);
+    let random_pos_acceleration = (Math.random() * (2 - 0.3) + 0.3);
+    let id = 0;
+    let pos_y = 0;
+    let pos_x = 0;
+    
+    clearInterval(id);
+    id = setInterval(frame, random_acceleration);
+
+    let start_x  = Math.floor(Math.random() * (window.innerWidth - (window.innerWidth / 20)));
+    let start_y  = Math.floor(Math.random() * (window.innerHeight - (window.innerHeight / 20)));
+    
+    function frame() {
+      // if it exceeds the browser's height, 
+      if (start_y + pos_y >= window.innerHeight) {
+        start_x  = Math.floor(Math.random() * (window.innerWidth - (window.innerWidth / 20)));
+        random_pos_acceleration = (Math.random() * (2 - 0.3) + 0.3);
+        pos_y = 0;
+        pos_x = 0;
+        start_y  = 0;
+        
+      } else if (start_x + (pos_x / 2) >= window.innerWidth){
+        start_y  = Math.floor(Math.random() * (window.innerHeight - (window.innerHeight / 20)));
+        random_pos_acceleration = (Math.random() * (2 - 0.3) + 0.3);
+        pos_x = 0;
+        pos_y = 0;
+        start_x  = 0;
+        
+      } else {
+        pos_y += 1 + random_pos_acceleration;
+        pos_x += 0.7 + random_pos_acceleration;
+        snow.style.top = start_y + pos_y + 'px';
+        snow.style.left = start_x + pos_x + 'px';
+      }
+    }
+  }
+}
+
 async function init() {
   // Header & Footer Load
   await fetchHtml("/_parts/navbar.html", "#header");
   await fetchHtml("/_parts/footer.html", "#footer");
-
+  adjustScreenSize();
+  snow();
   LightModeIconChange();
 }

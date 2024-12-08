@@ -43,12 +43,12 @@
         border-radius: 0.5rem;
     }
 
-    .seperator {
-        margin: 0 0.1rem 0 0.8rem;
-        height: 2rem;
-        border-right: 0.25rem solid var(--selected);
-        border-radius: 0.25rem;
-    }
+    /*.seperator {*/
+    /*    margin: 0 0.1rem 0 0.8rem;*/
+    /*    height: 2rem;*/
+    /*    border-right: 0.25rem solid var(--selected);*/
+    /*    border-radius: 0.25rem;*/
+    /*}*/
 
     .smolImage {height: 1.5rem; width: 1.5rem;}
     .bigImage {height: 2.5rem; width: 2.5rem;}
@@ -59,7 +59,7 @@
     .lightMode .logo span {filter: invert(0);}
     .menu-icon:hover, .gh-logo:hover, .dc-logo:hover, .lightModeButton:hover, .logo:hover {background-color: #00000014;}/* hover effect */
 </style>
-<a href="https://fpps4.net" class="logo">
+<a href="/" class="logo">
     <span style="color: #fff53c; font-weight: 500;">fp</span><span style="font-weight: 500;">PS4</span>
 </a>
 <div class="navbar-right">
@@ -69,10 +69,10 @@
     <a href="https://discord.com/invite/up9qatpX7M" target="_blank" class="dc-logo">
         <img src="/_images/discord.svg" class="smolImage" alt="Discord logo">
     </a>
-    <div onclick="toggleMenu()" class="menu-icon">
-        <img src="/_images/menu.svg" id="menu-icon" class="bigImage" alt="Menu button">
-        <img src="/_images/close.svg" id="close-icon" style="display: none;" class="bigImage" alt="Close Menu button">
-    </div>
+<!--    <div onclick="toggleMenu()" class="menu-icon">-->
+<!--        <img src="/_images/menu.svg" id="menu-icon" class="bigImage" alt="Menu button">-->
+<!--        <img src="/_images/close.svg" id="close-icon" style="display: none;" class="bigImage" alt="Close Menu button">-->
+<!--    </div>-->
     <div onclick="toggleLightMode()" class="lightModeButton">
         <img src="/_images/dark_mode.svg" id="darkModeIcon" style="opacity: 0;" class="bigImage" alt="Dark mode toggle">
         <img src="/_images/light_mode.svg" id="lightModeIcon" style="display: none;" class="bigImage" alt="Light mode toggle">

@@ -52,9 +52,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     datesButton = true;
     document.getElementById('datesButton').classList.toggle('selected');
   }
-
+  
   // Adjust screen size for mobile and 4k monitors for some reason
-  window.addEventListener('load', adjustScreenSize);
+  // window.addEventListener('load', adjustScreenSize);
   window.addEventListener('resize', adjustScreenSize);
 
 

@@ -420,6 +420,9 @@ input[type="number"]::-webkit-outer-spin-button {
   .footerSeparator {display: flex !important;}
   .footerContent:hover {background-color: #00000000 !important;}
   .pageBarContainer {gap: 0.6rem;}
+  .main {
+    width: 100vw;
+  }
 }
 
 @media screen and (min-width: 550px) {

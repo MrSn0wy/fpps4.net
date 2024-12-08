@@ -13,3 +13,7 @@ function scrollToElement(event, learnmore) {
         history.replaceState({}, document.title, window.location.href.split('#')[0]);
     }
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    snow();
+});
