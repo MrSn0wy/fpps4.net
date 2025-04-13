@@ -129,7 +129,7 @@ function snow() {
   // snowContainer.outerHTML = snowContainerHTML;
   
   function insert_snow(snow_size) {
-    let random_size  = Math.floor(Math.random() * (snow_size - 2) + 2);
+    let random_size = Math.floor(Math.random() * (snow_size - 2) + 2);
     
     const snowHTML = `
     <svg style="position: fixed;" width="${random_size}px" height="${random_size}px" opacity="40%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -150,7 +150,7 @@ function snow() {
     insert_snow(snow_size);
   }
   
-  for (let snow of  snowContainer.children) {
+  for (let snow of snowContainer.children) {
     let random_acceleration = Math.floor(Math.random() * (18 - 8) + 8);
     let random_pos_acceleration = (Math.random() * (2 - 0.3) + 0.3);
     let id = 0;
@@ -194,6 +194,16 @@ async function init() {
   await fetchHtml("/_parts/navbar.html", "#header");
   await fetchHtml("/_parts/footer.html", "#footer");
   adjustScreenSize();
-  snow();
+
+  addSnow()
+  
   LightModeIconChange();
+}
+
+function addSnow() {
+  // Only show the snow if its around winter time (december and january)
+  let current_month = new Date().getMonth();
+  if (current_month === 11 || current_month === 0) {
+    snow();
+  }
 }

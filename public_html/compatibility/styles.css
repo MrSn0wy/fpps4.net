@@ -28,14 +28,13 @@
   --text: #2E3440;
   --border: #b2b8c770;
   --solidBorder: #b2b8c7;
-  --background: #ECEFF4;
+  --background: #919ca9;
   --main0: #E5E9F0;
   --main1: #D8DEE9;
   --hover: #c6ccd9;
   --selected: #b0b7c7;
 }
 .lightMode .lightmodeText{color: #eceff4}
-
 /* .lightmode ::selection{background-color: #3864d4}
 ::selection {
   background-color: yellow;
@@ -193,10 +192,18 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .searchBar:focus,
-.pageSelector:focus {outline: none; background: var(--hover); transition: background 0.1s ease-in-out;}
+.pageSelector:focus {
+  outline: none;
+  background: var(--hover);
+  transition: background 0.1s ease-in-out;
+  border-color: var(--hover);
+}
 .searchBar::placeholder {color: #8C8C8C; font-weight: 500;}
 .pageSelector::placeholder {color: var(--text);}
-.searchBar:hover, .pageSelector:hover {background-color: var(--hover);}
+.searchBar:hover, .pageSelector:hover {
+  background-color: var(--hover);
+  border-color: var(--hover);
+}
 
 .optionButtons {
   display: flex;

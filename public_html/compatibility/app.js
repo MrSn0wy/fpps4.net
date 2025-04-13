@@ -199,10 +199,6 @@ function gameCardHandler(jsonData) {
     let imageSource = "";
     let imageText = "GAME";
     let imageTextSize = 1.25;
-
-    if (issue.title === "Sonic Time Twisted") {
-      console.log(issue.issue_type)
-    }
     
     switch(true) {
       case issue.image && imageLoading && avifSupport && issue.issue_type === "Homebrew":

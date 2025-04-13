@@ -15,5 +15,5 @@ function scrollToElement(event, learnmore) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    snow();
+    addSnow()
 });

@@ -30,8 +30,8 @@
   </style>
   <link rel="stylesheet" href="./styles.css">
   <link rel="icon" href="/_images/fpPS4Logo.png" type="image/png">
-  <script defer src="/_parts/required.js"></script>
-  <script defer src="./app.js"></script>
+  <script defer src="/_parts/required.js" type="application/javascript"></script>
+  <script defer src="./app.js" type="application/javascript"></script>
 </head>
 <body>
 <header id="header"></header>
@@ -39,14 +39,14 @@
   <h1 class="mainText">Game Compatibility List</h1>
   <h3 class="smolMainText">These are the games that have been tested with <span style="color: #f0e74a;">fp</span>PS4.<br>Click on an image to view the game's GitHub issue.<br>The database is updated every 10 minutes.</h3>
   <div class=progressContainer>
-    <div class="progressWrap"><span class="progressBarInfo" id="PlayableInfo"></span><span class="progr55essBarText">Playable</span><div class="progressBar" id="PlayableBar" style="background:#54A396;"></div></div>
+    <div class="progressWrap Playable"><span class="progressBarInfo" id="PlayableInfo"></span><span class="progressBarText">Playable</span><div class="progressBar" id="PlayableBar" style="background: var(--status-color)"></div></div>
     <div class="progressRow">
-      <div class="progressWrap"><span class="progressBarInfo" id="MenusInfo"></span><span class="progressBarText">Menus</span><div class="progressBar" id="MenusBar" style="background:#4288B7;"></div></div>
-      <div class="progressWrap"><span class="progressBarInfo" id="IngameInfo"></span><span class="progressBarText">Ingame</span><div class="progressBar" id="IngameBar" style="background:#fabb44;"></div></div>
+      <div class="progressWrap Menus"><span class="progressBarInfo" id="MenusInfo"></span><span class="progressBarText">Menus</span><div class="progressBar" id="MenusBar" style="background: var(--status-color)"></div></div>
+      <div class="progressWrap Ingame"><span class="progressBarInfo" id="IngameInfo"></span><span class="progressBarText">Ingame</span><div class="progressBar" id="IngameBar" style="background: var(--status-color)"></div></div>
     </div>
     <div class="progressRow">
-      <div class="progressWrap"><span class="progressBarInfo" id="NothingInfo"></span><span class="progressBarText">Nothing</span><div class="progressBar" id="NothingBar" style="background:#1F2325;"></div></div>
-      <div class="progressWrap"><span class="progressBarInfo" id="BootsInfo"></span><span class="progressBarText">Boots</span><div class="progressBar" id="BootsBar" style="background:#F2766E;"></div></div>
+      <div class="progressWrap Nothing"><span class="progressBarInfo" id="NothingInfo"></span><span class="progressBarText">Nothing</span><div class="progressBar" id="NothingBar" style="background: var(--status-color)"></div></div>
+      <div class="progressWrap Boots"><span class="progressBarInfo" id="BootsInfo"></span><span class="progressBarText">Boots</span><div class="progressBar" id="BootsBar" style="background: var(--status-color)"></div></div>
     </div></div>
   <div class="searchContainer">
     <div class="searchBarContainer">
